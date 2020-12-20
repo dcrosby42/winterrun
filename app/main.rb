@@ -1,6 +1,5 @@
-require "app/image_browser.rb"
-
-$top_module = ImageBrowser.new
+require "app/backgrounds.rb"
+$top_module = Backgrounds.new
 
 def tick(args)
   $top_module.args = args
