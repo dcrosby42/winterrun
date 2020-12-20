@@ -1,0 +1,6 @@
+devid=dcrosby42
+devtitle=dcrosby42
+gameid=mariodjc
+gametitle=MyMario
+#version=0.1
+#icon=metadata/icon.png
