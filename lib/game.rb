@@ -1,31 +1,85 @@
-class Game < Gosu::Window
-  Input = Struct.new(:dt, :dt_millis, :millis)
+require "keyboard"
+require "mouse"
+require "game_time"
+require "sidefx"
 
-  def initialize(mod)
-    w = 1280
-    h = 720
-    super w, h
-    self.caption = "WinterRun"
+class Game < Gosu::Window
+  Input = Struct.new(:time, :keyboard, :mouse)
+
+  def initialize(root_module:, caption: "Game", width: 1280, height: 720, fullscreen: false, update_interval: nil, mouse_pointer_visible: false)
+    super width, height
+    self.caption = caption
+    @fullscreen = fullscreen
+    self.fullscreen = @fullscreen
+    self.update_interval = update_interval if update_interval
+    @mouse_pointer_visible = false
+
+    @keyboard = Keyboard.new
+    @mouse = Mouse.new
+    @time = GameTime.new
 
     @input = Input.new
-    @input.millis = 0
-    @input.dt_millis = 0
-    @input.dt = 0
 
-    @module = mod
-    @state = @module.initialState(OpenStruct.new({ w: w, h: h }))
+    @module = root_module
+    @state = @module.initialState(OpenStruct.new({ width: width, height: height }))
+    @res = @module.initialResources
+  end
+
+  def start!
+    puts "Starting #{self.caption}"
+    show
   end
 
   def update
-    last_millis = @input.millis
-    @input.millis = Gosu.milliseconds
-    @input.dt_millis = @input.millis - last_millis
-    @input.dt = @input.dt_millis / 1000.0
+    @time.update_to Gosu.milliseconds
 
-    @state = @module.update(@state, @input)
+    @input.time = @time                # input.time #dt #dt_millis #millis
+    @input.keyboard = @keyboard.state
+    @input.mouse = @mouse
+
+    s1, sidefx = @module.update(@state, @input, @res)
+    @state = s1 unless s1.nil?
+    @keyboard.after_update
+    handle_sidefx sidefx
+  end
+
+  def handle_sidefx(sidefx)
+    case sidefx
+    when Array
+      sidefx.each(&method(:handle_sidefx))
+    when Sidefx::ToggleFullscreen
+      @fullscreen = !@fullscreen
+      puts "Toggle fullscreen => #{@fullscreen}"
+      self.fullscreen = @fullscreen
+    end
   end
 
   def draw
-    @module.draw(@state)
+    @module.draw(@state, @res)
+  end
+
+  def button_down(id)
+    @keyboard.button_down(id)
+  end
+
+  def button_up(id)
+    @keyboard.button_up(id)
+  end
+
+  def needs_cursor?
+    return @mouse_pointer_visible
+  end
+
+  # Unused (for now) Gosu callback
+  # def needs_redraw?
+  #   super
+  # end
+
+  # def drop
+  #   super
+  # end
+
+  def close
+    super
   end
 end

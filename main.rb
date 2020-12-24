@@ -3,4 +3,8 @@ require "./config/environment"
 require "game"
 require "modules/backgrounds"
 
-Game.new(Backgrounds).show
+Game.new(
+  root_module: Backgrounds,
+  caption: "WinterRun",
+  fullscreen: false,
+).start!
