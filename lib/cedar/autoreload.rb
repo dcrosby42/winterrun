@@ -14,6 +14,8 @@
 # Written by Mikio L. Braun, March 16, 2008, edited Jan 15, 2010
 # https://gist.githubusercontent.com/mikiobraun/278117/raw/a1359417a3ad6e6f8492e84230a660313ba916ac/autoreload.rb
 
+# dcrosby: I'm plunking this down inside my Cedar framework but not namespacing it beneath Cedar::
+
 require "pp"
 require "set"
 

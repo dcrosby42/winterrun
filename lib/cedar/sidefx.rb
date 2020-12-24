@@ -1,4 +1,4 @@
-module Sidefx
+module Cedar::Sidefx
   class ToggleFullscreen
   end
 

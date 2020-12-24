@@ -1,8 +1,29 @@
 require "ostruct"
-require "draw_image"
+
+# class Component
+#   def self.new(pdefs)
+#     prop_defs = pdefs.clone
+#     comp_class = Struct.new(prop_defs.keys)
+#     class << comp_class
+#       def props
+#         prop_defs
+#       end
+
+#       def defaults!
+#         prop_defs.each do |key, val|
+#         end
+#       end
+
+#       def construct(h)
+#       end
+#     end
+#   end
+# end
 
 module Backgrounds
   extend self
+
+  # Timer = Component.new({ elapsed: 0, span: 1, alarm: false })
 
   BackgroundW = 1421
   BackgroundH = 480
@@ -32,6 +53,7 @@ module Backgrounds
     return OpenStruct.new({
              vport: OpenStruct.new({ x: 0, y: 0, w: opts.width, h: opts.height }),
              bgscale: 1.5,
+             reload_timer: 2,
            })
   end
 
@@ -64,9 +86,11 @@ module Backgrounds
       fx << Sidefx::ToggleFullscreen.new
     end
 
-    # if input.keyboard.pressed?(Gosu::KB_F1)
-    #   fx << Sidefx::Reload.new
-    # end
+    state.reload_timer -= input.time.dt
+    if state.reload_timer < 0
+      state.reload_timer = 1.2
+      fx << Cedar::Sidefx::Reload.new
+    end
 
     [state, fx]
   end
@@ -84,7 +108,7 @@ module Backgrounds
       bg_tile_ranges << (ltx..rtx)
       (ltx..rtx).to_a.map do |tx|
         x = (BackgroundW * state.bgscale * tx) - (state.vport.x * bg[:parallax])
-        DrawImage.new(
+        Cedar::DrawImage.new(
           path: bg[:path],
           x: x,
           y: 0,

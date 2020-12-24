@@ -1,9 +1,8 @@
 require "./config/environment"
 
-require "game"
 require "modules/backgrounds"
 
-Game.new(
+Cedar::Game.new(
   root_module: Backgrounds,
   caption: "WinterRun",
   fullscreen: false,

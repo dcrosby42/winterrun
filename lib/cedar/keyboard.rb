@@ -1,4 +1,4 @@
-class Keyboard
+class Cedar::Keyboard
   attr_reader :state
   attr_reader :keys_down, :keys_pressed, :keys_released
 

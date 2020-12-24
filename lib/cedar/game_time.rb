@@ -1,4 +1,4 @@
-class GameTime
+class Cedar::GameTime
   def initialize
     @millis = nil
     @dt_millis = nil

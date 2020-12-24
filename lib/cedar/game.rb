@@ -1,24 +1,19 @@
-require "keyboard"
-require "mouse"
-require "game_time"
-require "sidefx"
+Cedar::Input = Struct.new(:time, :keyboard, :mouse, :did_reload, :did_reset)
 
-class Game < Gosu::Window
-  Input = Struct.new(:time, :keyboard, :mouse, :did_reload, :did_reset)
-
-  def initialize(root_module:, caption: "Game", width: 1280, height: 720, fullscreen: false, update_interval: nil, mouse_pointer_visible: false)
+class Cedar::Game < Gosu::Window
+  def initialize(root_module:, caption: "Game", width: 1280, height: 720, fullscreen: false, update_interval: nil, mouse_pointer_visible: false, reload_button: Gosu::KB_R)
     super width, height
     self.caption = caption
     @fullscreen = fullscreen
     self.fullscreen = @fullscreen
     self.update_interval = update_interval if update_interval
     @mouse_pointer_visible = false
+    @reload_button = reload_button
 
-    @keyboard = Keyboard.new
-    @mouse = Mouse.new
-    @time = GameTime.new
-
-    @input = Input.new
+    @keyboard = Cedar::Keyboard.new
+    @mouse = Cedar::Mouse.new
+    @time = Cedar::GameTime.new
+    @input = Cedar::Input.new
 
     @module = root_module
     reset_state
@@ -55,11 +50,12 @@ class Game < Gosu::Window
     case sidefx
     when Array
       sidefx.each(&method(:handle_sidefx))
-    when Sidefx::ToggleFullscreen
+    when Cedar::Sidefx::ToggleFullscreen
       @fullscreen = !@fullscreen
       puts "Toggle fullscreen => #{@fullscreen}"
       self.fullscreen = @fullscreen
-    when Sidefx::Reload
+    when Cedar::Sidefx::Reload
+      reload_code
     end
   end
 
@@ -92,18 +88,23 @@ class Game < Gosu::Window
     super
   end
 
+  def reload_code
+    if AutoReload.reload_all
+      puts "Code reloaded"
+      return true
+    end
+    false
+  end
+
   def check_for_reload
-    if @keyboard.state.alt? and @keyboard.state.pressed?(Gosu::KB_R)
-      if AutoReload.reload_all
-        puts "Code reloaded"
-        return true
-      end
+    if @keyboard.state.alt? and @keyboard.state.pressed?(@reload_button)
+      return reload_code
     end
     false
   end
 
   def check_for_reset
-    if @keyboard.state.shift? and @keyboard.state.pressed?(Gosu::KB_R)
+    if @keyboard.state.shift? and @keyboard.state.pressed?(@reload_button)
       reset_state
       puts "State reset"
       true
