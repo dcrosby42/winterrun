@@ -4,7 +4,7 @@ require "game_time"
 require "sidefx"
 
 class Game < Gosu::Window
-  Input = Struct.new(:time, :keyboard, :mouse)
+  Input = Struct.new(:time, :keyboard, :mouse, :did_reload, :did_reset)
 
   def initialize(root_module:, caption: "Game", width: 1280, height: 720, fullscreen: false, update_interval: nil, mouse_pointer_visible: false)
     super width, height
@@ -21,7 +21,11 @@ class Game < Gosu::Window
     @input = Input.new
 
     @module = root_module
-    @state = @module.initialState(OpenStruct.new({ width: width, height: height }))
+    reset_state
+  end
+
+  def reset_state
+    @state = @module.initialState(OpenStruct.new({ width: self.width, height: self.height }))
     @res = @module.initialResources
   end
 
@@ -31,11 +35,15 @@ class Game < Gosu::Window
   end
 
   def update
+    did_reload = check_for_reload
+    did_reset = check_for_reset
     @time.update_to Gosu.milliseconds
 
     @input.time = @time                # input.time #dt #dt_millis #millis
     @input.keyboard = @keyboard.state
     @input.mouse = @mouse
+    @input.did_reload = did_reload
+    @input.did_reset = did_reset
 
     s1, sidefx = @module.update(@state, @input, @res)
     @state = s1 unless s1.nil?
@@ -51,6 +59,7 @@ class Game < Gosu::Window
       @fullscreen = !@fullscreen
       puts "Toggle fullscreen => #{@fullscreen}"
       self.fullscreen = @fullscreen
+    when Sidefx::Reload
     end
   end
 
@@ -81,5 +90,24 @@ class Game < Gosu::Window
 
   def close
     super
+  end
+
+  def check_for_reload
+    if @keyboard.state.alt? and @keyboard.state.pressed?(Gosu::KB_R)
+      if AutoReload.reload_all
+        puts "Code reloaded"
+        return true
+      end
+    end
+    false
+  end
+
+  def check_for_reset
+    if @keyboard.state.shift? and @keyboard.state.pressed?(Gosu::KB_R)
+      reset_state
+      puts "State reset"
+      true
+    end
+    false
   end
 end

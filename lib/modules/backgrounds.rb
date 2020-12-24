@@ -64,6 +64,10 @@ module Backgrounds
       fx << Sidefx::ToggleFullscreen.new
     end
 
+    # if input.keyboard.pressed?(Gosu::KB_F1)
+    #   fx << Sidefx::Reload.new
+    # end
+
     [state, fx]
   end
 
