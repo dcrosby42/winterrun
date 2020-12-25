@@ -1,29 +1,26 @@
 require "ostruct"
-
-# class Component
-#   def self.new(pdefs)
-#     prop_defs = pdefs.clone
-#     comp_class = Struct.new(prop_defs.keys)
-#     class << comp_class
-#       def props
-#         prop_defs
-#       end
-
-#       def defaults!
-#         prop_defs.each do |key, val|
-#         end
-#       end
-
-#       def construct(h)
-#       end
-#     end
-#   end
-# end
+require "component"
 
 module Backgrounds
   extend self
 
-  # Timer = Component.new({ elapsed: 0, span: 1, alarm: false })
+  Timer = Component.new(:timer, { t: 0, limit: 1, alarm: false, loop: false })
+
+  def update_timer(timer, dt)
+    if timer.alarm
+      if timer.loop
+        timer.t = 0
+        timer.alarm = false
+      end
+    else
+      timer.t += dt
+      if timer.t > timer.limit
+        timer.t = timer.limit
+        timer.alarm = true
+      end
+    end
+    timer
+  end
 
   BackgroundW = 1421
   BackgroundH = 480
@@ -53,7 +50,7 @@ module Backgrounds
     return OpenStruct.new({
              vport: OpenStruct.new({ x: 0, y: 0, w: opts.width, h: opts.height }),
              bgscale: 1.5,
-             reload_timer: 2,
+             reload_timer: Timer.new({ limit: 1.5, loop: true }),
            })
   end
 
@@ -86,9 +83,8 @@ module Backgrounds
       fx << Sidefx::ToggleFullscreen.new
     end
 
-    state.reload_timer -= input.time.dt
-    if state.reload_timer < 0
-      state.reload_timer = 1.2
+    update_timer state.reload_timer, input.time.dt
+    if state.reload_timer.alarm
       fx << Cedar::Sidefx::Reload.new
     end
 
