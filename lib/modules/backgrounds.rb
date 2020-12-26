@@ -44,7 +44,7 @@ module Backgrounds
     UI: 5,
   })
 
-  def initialState(opts = nil)
+  def new_state(opts = nil)
     opts ||= OpenStruct.new
 
     return OpenStruct.new({
@@ -54,15 +54,8 @@ module Backgrounds
            })
   end
 
-  def initialResources
-    res = Struct.new(:images, :fonts).new
-    res.images = Hash.new do |h, key|
-      h[key] = Gosu::Image.new(key, tileable: true, retro: true)
-    end
-    res.fonts = {}
-    res.fonts[:default] = Gosu::Font.new(20)
-    res
-  end
+  # def load_resources(res)
+  # end
 
   def update(state, input, res)
     state.bgscale = 1.5 if input.keyboard.pressed?(Gosu::KB_0)
@@ -80,7 +73,7 @@ module Backgrounds
 
     fx = []
     if input.keyboard.pressed?(Gosu::KB_F11)
-      fx << Sidefx::ToggleFullscreen.new
+      fx << Cedar::Sidefx::ToggleFullscreen.new
     end
 
     update_timer state.reload_timer, input.time.dt
@@ -91,7 +84,7 @@ module Backgrounds
     [state, fx]
   end
 
-  def draw(state, res)
+  def draw(state, output, res)
     # Gosu.draw_rect(0, 0, state.vport.w, state.vport.h, Gosu::Color::BLUE, ZOrder.BACKGROUND, mode = :default)
 
     bg_tile_ranges = []
@@ -104,7 +97,7 @@ module Backgrounds
       bg_tile_ranges << (ltx..rtx)
       (ltx..rtx).to_a.map do |tx|
         x = (BackgroundW * state.bgscale * tx) - (state.vport.x * bg[:parallax])
-        Cedar::DrawImage.new(
+        Cedar::Draw::Image.new(
           path: bg[:path],
           x: x,
           y: 0,
@@ -114,12 +107,15 @@ module Backgrounds
         )
       end
     end
+    output << ss
 
-    ss.each do |dimg|
-      res.images[dimg.path].draw(dimg.x, dimg.y, dimg.z || 0, dimg.scale_x, dimg.scale_y)
-    end
+    # ss.each do |img|
+    #   img.draw(res)
+    # end
 
     bg_tile_ranges_str = bg_tile_ranges.map do |r| r.to_a.inspect end.join(" / ")
-    res.fonts[:default].draw_text("bgtiles: #{bg_tile_ranges_str}", 0, 0, ZOrder.UI, state.bgscale, state.bgscale)
+    label = Cedar::Draw::Label.new(text: bg_tile_ranges_str, z: ZOrder.UI, scale_x: state.bgscale, scale_y: state.bgscale)
+    output << label
+    # label.draw(res)
   end
 end

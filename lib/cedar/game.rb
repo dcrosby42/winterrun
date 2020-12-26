@@ -1,6 +1,8 @@
 Cedar::Input = Struct.new(:time, :keyboard, :mouse, :did_reload, :did_reset)
 
 class Cedar::Game < Gosu::Window
+  NewStateArgs = Struct.new(:width, :height, keyword_init: true)
+
   def initialize(root_module:, caption: "Game", width: 1280, height: 720, fullscreen: false, update_interval: nil, mouse_pointer_visible: false, reload_button: Gosu::KB_R)
     super width, height
     self.caption = caption
@@ -14,14 +16,26 @@ class Cedar::Game < Gosu::Window
     @mouse = Cedar::Mouse.new
     @time = Cedar::GameTime.new
     @input = Cedar::Input.new
+    @output = Cedar::Output.new
 
     @module = root_module
     reset_state
   end
 
   def reset_state
-    @state = @module.initialState(OpenStruct.new({ width: self.width, height: self.height }))
-    @res = @module.initialResources
+    @state = @module.new_state(NewStateArgs.new(width: self.width, height: self.height))
+    @res = new_resources
+    @module.load_resources(res) if @module.respond_to?(:load_resources)
+  end
+
+  def new_resources
+    res = Struct.new(:images, :fonts).new
+    res.images = Hash.new do |h, key|
+      h[key] = Gosu::Image.new(key, tileable: true, retro: true)
+    end
+    res.fonts = {}
+    res.fonts[:default] = Gosu::Font.new(20)
+    res
   end
 
   def start!
@@ -60,7 +74,9 @@ class Cedar::Game < Gosu::Window
   end
 
   def draw
-    @module.draw(@state, @res)
+    @output.clear
+    @module.draw(@state, @output, @res)
+    @output.draw(@res)
   end
 
   def button_down(id)
