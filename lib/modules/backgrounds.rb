@@ -4,24 +4,6 @@ require "component"
 module Backgrounds
   extend self
 
-  Timer = Component.new(:timer, { t: 0, limit: 1, alarm: false, loop: false })
-
-  def update_timer(timer, dt)
-    if timer.alarm
-      if timer.loop
-        timer.t = 0
-        timer.alarm = false
-      end
-    else
-      timer.t += dt
-      if timer.t > timer.limit
-        timer.t = timer.limit
-        timer.alarm = true
-      end
-    end
-    timer
-  end
-
   BackgroundW = 1421
   BackgroundH = 480
 
@@ -76,7 +58,8 @@ module Backgrounds
       fx << Cedar::Sidefx::ToggleFullscreen.new
     end
 
-    update_timer state.reload_timer, input.time.dt
+    TimerSystem.new.update state.reload_timer, input
+
     if state.reload_timer.alarm
       fx << Cedar::Sidefx::Reload.new
     end
