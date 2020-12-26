@@ -1,7 +1,7 @@
 require "ostruct"
 require "component"
 
-module Backgrounds
+module BgTester
   extend self
 
   BackgroundW = 1421
@@ -90,7 +90,7 @@ module Backgrounds
         )
       end
     end
-    output << ss
+    output.graphics << ss
 
     # ss.each do |img|
     #   img.draw(res)
@@ -98,7 +98,7 @@ module Backgrounds
 
     bg_tile_ranges_str = bg_tile_ranges.map do |r| r.to_a.inspect end.join(" / ")
     label = Cedar::Draw::Label.new(text: bg_tile_ranges_str, z: ZOrder.UI, scale_x: state.bgscale, scale_y: state.bgscale)
-    output << label
+    output.graphics << label
     # label.draw(res)
   end
 end
