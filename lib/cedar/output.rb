@@ -1,22 +1,13 @@
-class Cedar::Output
-  def initialize
-    @drawables = []
-  end
+module Cedar
+  class Output
+    attr_reader :graphics
 
-  def clear
-    @drawables.clear
-  end
-
-  def <<(dr)
-    case dr
-    when Array
-      @drawables.concat(dr)
-    else
-      @drawables << dr
+    def initialize
+      @graphics = Cedar::Draw::Sequence.new
     end
-  end
 
-  def draw(res)
-    @drawables.each do |d| d.draw(res) end
+    def reset
+      @graphics.clear
+    end
   end
 end

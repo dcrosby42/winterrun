@@ -74,9 +74,9 @@ class Cedar::Game < Gosu::Window
   end
 
   def draw
-    @output.clear
+    @output.reset
     @module.draw(@state, @output, @res)
-    @output.draw(@res)
+    @output.graphics.draw(@res)
   end
 
   def button_down(id)
