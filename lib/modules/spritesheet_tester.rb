@@ -1,7 +1,7 @@
 require "systems/timer_system"
 require "components/timer"
 
-module Spritesheet
+module SpritesheetTester
   extend self
 
   ZOrder = OpenStruct.new({
@@ -11,8 +11,8 @@ module Spritesheet
     UI: 10,
   })
 
-  def new_state(opts = nil)
-    opts ||= open_struct()
+  def new_state
+    puts "SpritesheetTester.new_state"
     girl_png = "sprites/infinite_runner_pack/girl_day.png"
     boy_png = "sprites/infinite_runner_pack/boy_day.png"
 
@@ -64,13 +64,36 @@ module Spritesheet
         stride: 3,
       },
     })
+    biff_sheet = open_struct({
+      path: girl_png,
+      name: "girl_biff",
+      tile_grid: {
+        x: 4 * 36,
+        y: 36,
+        w: 36,
+        h: 36,
+        count: 9,
+        stride: 3,
+      },
+    })
+    biff_sheet_boy = open_struct({
+      path: boy_png,
+      name: "boy_biff",
+      tile_grid: {
+        x: 4 * 36,
+        y: 36,
+        w: 36,
+        h: 36,
+        count: 9,
+        stride: 3,
+      },
+    })
     frame_rate = 24
     return open_struct({
-             vport: OpenStruct.new({ x: 0, y: 0, w: opts.width, h: opts.height }),
+             vport: open_struct(x: 0, y: 0, w: 0, h: 0),
              scale: 2,
              reload_timer: Timer.new({ limit: 1.5, loop: true }),
-             filename: "sprites/infinite_runner_pack/girl.png",
-             sheets: [run_sheet, jump_sheet, run_sheet_boy, jump_sheet_boy],
+             sheets: [run_sheet, jump_sheet, biff_sheet, run_sheet_boy, jump_sheet_boy, biff_sheet_boy],
              selected_sheet: 0,
              selected_frame: 0,
              playing: false,
@@ -80,6 +103,9 @@ module Spritesheet
   end
 
   def update(state, input, res)
+    state.vport.w = input.window.width
+    state.vport.h = input.window.height
+
     state.scale = 1 if input.keyboard.pressed?(Gosu::KB_0)
     state.scale += 0.1 if input.keyboard.pressed?(Gosu::KB_EQUALS)
     state.scale -= 0.1 if input.keyboard.pressed?(Gosu::KB_MINUS)

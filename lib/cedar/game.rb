@@ -1,8 +1,6 @@
-Cedar::Input = Struct.new(:time, :keyboard, :mouse, :did_reload, :did_reset)
+Cedar::Input = Struct.new(:window, :time, :keyboard, :mouse, :did_reload, :did_reset)
 
 class Cedar::Game < Gosu::Window
-  NewStateArgs = Struct.new(:width, :height, keyword_init: true)
-
   def initialize(root_module:, caption: "Game", width: 1280, height: 720, fullscreen: false, update_interval: nil, mouse_pointer_visible: false, reload_button: Gosu::KB_R)
     super width, height
     self.caption = caption
@@ -23,7 +21,7 @@ class Cedar::Game < Gosu::Window
   end
 
   def reset_state
-    @state = @module.new_state(NewStateArgs.new(width: self.width, height: self.height))
+    @state = @module.new_state
     @res = new_resources
     @module.load_resources(res) if @module.respond_to?(:load_resources)
   end
@@ -45,14 +43,15 @@ class Cedar::Game < Gosu::Window
 
   def update
     did_reload = check_for_reload
-    did_reset = check_for_reset
+    # did_reset = check_for_reset
     @time.update_to Gosu.milliseconds
 
+    @input.window = self               # input.time #dt #dt_millis #millis
     @input.time = @time                # input.time #dt #dt_millis #millis
     @input.keyboard = @keyboard.state
     @input.mouse = @mouse
     @input.did_reload = did_reload
-    @input.did_reset = did_reset
+    @input.did_reset = false
 
     s1, sidefx = @module.update(@state, @input, @res)
     @state = s1 unless s1.nil?
@@ -119,12 +118,12 @@ class Cedar::Game < Gosu::Window
     false
   end
 
-  def check_for_reset
-    if @keyboard.state.shift? and @keyboard.state.pressed?(@reload_button)
-      reset_state
-      puts "State reset"
-      true
-    end
-    false
-  end
+  # def check_for_reset
+  #   if @keyboard.state.shift? and @keyboard.state.pressed?(@reload_button)
+  #     reset_state
+  #     puts "State reset"
+  #     true
+  #   end
+  #   false
+  # end
 end

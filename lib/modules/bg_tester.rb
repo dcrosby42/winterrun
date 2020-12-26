@@ -26,11 +26,9 @@ module BgTester
     UI: 5,
   })
 
-  def new_state(opts = nil)
-    opts ||= OpenStruct.new
-
+  def new_state
     return OpenStruct.new({
-             vport: OpenStruct.new({ x: 0, y: 0, w: opts.width, h: opts.height }),
+             vport: OpenStruct.new({ x: 0, y: 0, w: 0, h: 0 }),
              bgscale: 1.5,
              reload_timer: Timer.new({ limit: 1.5, loop: true }),
            })
@@ -40,6 +38,9 @@ module BgTester
   # end
 
   def update(state, input, res)
+    state.vport.w = input.window.width
+    state.vport.h = input.window.height
+
     state.bgscale = 1.5 if input.keyboard.pressed?(Gosu::KB_0)
     state.bgscale += 0.1 if input.keyboard.pressed?(Gosu::KB_EQUALS)
     state.bgscale -= 0.1 if input.keyboard.pressed?(Gosu::KB_MINUS)
