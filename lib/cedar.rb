@@ -2,6 +2,7 @@ module Cedar
 end
 
 require "gosu"
+require "cedar/to_recursive_ostruct"
 require "cedar/autoreload"
 require "cedar/game"
 require "cedar/keyboard"
