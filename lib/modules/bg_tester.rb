@@ -8,17 +8,17 @@ module BgTester
   BackgroundH = 480
 
   ABackgrounds = [
-    { path: "sprites/snowy_forest/Backgrounds/background layer0.png", parallax: 0.125 },
-    { path: "sprites/snowy_forest/Backgrounds/background layer1.png", parallax: 0.25 },
-    { path: "sprites/snowy_forest/Backgrounds/background layer2.png", parallax: 0.5 },
-    { path: "sprites/snowy_forest/Backgrounds/background layer3.png", parallax: 1 },
+    { path: "snowy_forest/Backgrounds/background layer0.png", parallax: 0.125 },
+    { path: "snowy_forest/Backgrounds/background layer1.png", parallax: 0.25 },
+    { path: "snowy_forest/Backgrounds/background layer2.png", parallax: 0.5 },
+    { path: "snowy_forest/Backgrounds/background layer3.png", parallax: 1 },
   ]
 
   BBackgrounds = [
-    { path: "sprites/snowy_forest/Backgrounds/background layer0b.png", parallax: 0.125 },
-    { path: "sprites/snowy_forest/Backgrounds/background layer1b.png", parallax: 0.25 },
-    { path: "sprites/snowy_forest/Backgrounds/background layer2b.png", parallax: 0.5 },
-    { path: "sprites/snowy_forest/Backgrounds/background layer3b.png", parallax: 1 },
+    { path: "snowy_forest/Backgrounds/background layer0b.png", parallax: 0.125 },
+    { path: "snowy_forest/Backgrounds/background layer1b.png", parallax: 0.25 },
+    { path: "snowy_forest/Backgrounds/background layer2b.png", parallax: 0.5 },
+    { path: "snowy_forest/Backgrounds/background layer3b.png", parallax: 1 },
   ]
 
   ZOrder = OpenStruct.new({

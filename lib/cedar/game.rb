@@ -27,13 +27,7 @@ class Cedar::Game < Gosu::Window
   end
 
   def new_resources
-    res = Struct.new(:images, :fonts).new
-    res.images = Hash.new do |h, key|
-      h[key] = Gosu::Image.new(key, tileable: true, retro: true)
-    end
-    res.fonts = {}
-    res.fonts[:default] = Gosu::Font.new(20)
-    res
+    Cedar::Resources.new
   end
 
   def start!

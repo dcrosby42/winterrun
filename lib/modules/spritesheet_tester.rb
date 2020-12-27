@@ -34,7 +34,7 @@ class SpriteSheet
   def at(i, res)
     left = @tile_grid.x + @tile_grid.w * (i % @tile_grid.stride)
     top = @tile_grid.y + @tile_grid.h * (i / @tile_grid.stride)
-    img = res.images[@path]
+    img = res.images(@path)
     return img.subimage(left, top, @tile_grid.w, @tile_grid.h)
   end
 end
@@ -50,9 +50,8 @@ module SpritesheetTester
   })
 
   def new_state
-    puts "SpritesheetTester.new_state"
-    girl_png = "sprites/infinite_runner_pack/girl_day.png"
-    boy_png = "sprites/infinite_runner_pack/boy_day.png"
+    girl_png = "infinite_runner_pack/girl_day.png"
+    boy_png = "infinite_runner_pack/boy_day.png"
 
     run_sheet = SpriteSheet.new(
       path: girl_png,
@@ -218,7 +217,7 @@ module SpritesheetTester
     output.graphics << gs
 
     text_y = 0
-    output.graphics << Cedar::Draw::Label.new(text: "Sheet #{state.selected_sheet}: name: #{sheet.name} path: #{sheet.path} w=#{res.images[sheet.path].width} h=#{res.images[sheet.path].height}", y: text_y, z: ZOrder.UI)
+    output.graphics << Cedar::Draw::Label.new(text: "Sheet #{state.selected_sheet}: name: #{sheet.name} path: #{sheet.path} w=#{res.images(sheet.path).width} h=#{res.images(sheet.path).height}", y: text_y, z: ZOrder.UI)
     text_y += 20
     output.graphics << Cedar::Draw::Label.new(text: "fps: #{state.frame_rate} frame: #{state.selected_frame} of #{state.sheets[state.selected_sheet].tile_grid.count}", y: text_y, z: ZOrder.UI)
     # output.graphics << Cedar::Draw::Line.new(x1: 20, y1: 20, x2: 30, y2: 300)

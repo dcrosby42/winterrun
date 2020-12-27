@@ -16,7 +16,7 @@ module Cedar
 
     Image = Struct.new(:image, :path, :x, :y, :z, :scale_x, :scale_y, :subimage, keyword_init: true) do
       def draw(res)
-        img = image || res.images[path || raise("Image needs :image or :path")]
+        img = image || res.images(path || raise("Image needs :image or :path"))
         if subimage
           img = img.subimage(*subimage)
         end
@@ -26,7 +26,7 @@ module Cedar
 
     Label = Struct.new(:text, :font, :x, :y, :z, :scale_x, :scale_y, :color, keyword_init: true) do
       def draw(res)
-        res.fonts[font || :default].draw_text(text, x || 0, y || 0, z || 0, scale_x || 1, scale_y || 1, color || Gosu::Color::WHITE)
+        res.fonts(font || :default).draw_text(text, x || 0, y || 0, z || 0, scale_x || 1, scale_y || 1, color || Gosu::Color::WHITE)
       end
     end
 
