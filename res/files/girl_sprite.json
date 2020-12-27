@@ -1,0 +1,38 @@
+[
+    {
+        "name": "girl_run",
+        "path": "infinite_runner_pack/girl_day.png",
+        "tile_grid": {
+            "x": 0,
+            "y": 36,
+            "w": 36,
+            "h": 36,
+            "count": 8,
+            "stride": 3
+        }
+    },
+    {
+        "name": "girl_jump",
+        "path": "infinite_runner_pack/girl_day.png",
+        "tile_grid": {
+            "x": 0,
+            "y": 180,
+            "w": 36,
+            "h": 36,
+            "count": 8,
+            "stride": 3
+        }
+    },
+    {
+        "name": "girl_biff",
+        "path": "infinite_runner_pack/girl_day.png",
+        "tile_grid": {
+            "x": 144,
+            "y": 36,
+            "w": 36,
+            "h": 36,
+            "count": 9,
+            "stride": 3
+        }
+    }
+]

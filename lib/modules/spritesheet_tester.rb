@@ -50,86 +50,11 @@ module SpritesheetTester
   })
 
   def new_state
-    girl_png = "infinite_runner_pack/girl_day.png"
-    boy_png = "infinite_runner_pack/boy_day.png"
-
-    run_sheet = SpriteSheet.new(
-      path: girl_png,
-      name: "girl_run",
-      tile_grid: {
-        x: 0,
-        y: 36,
-        w: 36,
-        h: 36,
-        count: 8,
-        stride: 3,
-      },
-    )
-    run_sheet_boy = SpriteSheet.new(
-      path: boy_png,
-      name: "boy_run",
-      tile_grid: {
-        x: 0,
-        y: 36,
-        w: 36,
-        h: 36,
-        count: 8,
-        stride: 3,
-      },
-    )
-    jump_sheet = SpriteSheet.new(
-      path: girl_png,
-      name: "girl_jump",
-      tile_grid: {
-        x: 0,
-        y: 5 * 36,
-        w: 36,
-        h: 36,
-        count: 8,
-        stride: 3,
-      },
-    )
-    jump_sheet_boy = SpriteSheet.new(
-      path: boy_png,
-      name: "boy_jump",
-      tile_grid: {
-        x: 0,
-        y: 5 * 36,
-        w: 36,
-        h: 36,
-        count: 8,
-        stride: 3,
-      },
-    )
-    biff_sheet = SpriteSheet.new(
-      path: girl_png,
-      name: "girl_biff",
-      tile_grid: {
-        x: 4 * 36,
-        y: 36,
-        w: 36,
-        h: 36,
-        count: 9,
-        stride: 3,
-      },
-    )
-    biff_sheet_boy = SpriteSheet.new(
-      path: boy_png,
-      name: "boy_biff",
-      tile_grid: {
-        x: 4 * 36,
-        y: 36,
-        w: 36,
-        h: 36,
-        count: 9,
-        stride: 3,
-      },
-    )
     frame_rate = 24
     return open_struct({
              scale: 2,
              reload_timer: Timer.new({ limit: 1.5, loop: true }),
-             sheets: [run_sheet, jump_sheet, biff_sheet, run_sheet_boy, jump_sheet_boy, biff_sheet_boy],
+             sheets: nil,
              selected_sheet: 0,
              selected_frame: 0,
              playing: false,
@@ -138,7 +63,16 @@ module SpritesheetTester
            })
   end
 
+  def init_sheets(res)
+    girls = res.files("girl_sprite.json")
+    boys = res.files("boy_sprite.json")
+    [girls, boys].flatten.map do |obj|
+      SpriteSheet.new(**obj)
+    end
+  end
+
   def update(state, input, res)
+    state.sheets ||= init_sheets(res)
     state.scale = 1 if input.keyboard.pressed?(Gosu::KB_0)
     state.scale += 0.1 if input.keyboard.pressed?(Gosu::KB_EQUALS)
     state.scale -= 0.1 if input.keyboard.pressed?(Gosu::KB_MINUS)
@@ -185,26 +119,16 @@ module SpritesheetTester
   end
 
   def draw(state, output, res)
-    frame = state.selected_frame
-
     gs = Cedar::Draw::ScaleTransform.new(state.scale)
 
+    frame = state.selected_frame
     sheet = state.sheets[state.selected_sheet]
-
-    begin
-      # grid = sheet.tile_grid
-      # left = grid.x + grid.w * (frame % grid.stride)
-      # top = grid.y + grid.h * (frame / grid.stride)
-      # info = { path: sheet.path,
-      #          subimage: [left, top, grid.w, grid.h] }
-
-      gs << Cedar::Draw::Image.new(
-        image: sheet.at(frame, res),
-        x: 0,
-        y: 36,
-        z: ZOrder.SHEET,
-      )
-    end
+    gs << Cedar::Draw::Image.new(
+      image: sheet.at(frame, res),
+      x: 0,
+      y: 36,
+      z: ZOrder.SHEET,
+    )
 
     draw_sheet_grid(0, 72, sheet, frame, gs, res)
     gs << Cedar::Draw::Image.new(
