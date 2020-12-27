@@ -1,6 +1,44 @@
 require "systems/timer_system"
 require "components/timer"
 
+Sprite = Component.new(:sprite, {
+  anim: nil,
+  t: 0,
+  factor: 1.0,
+})
+
+class FixedTimeline
+  def initialize(count:, fps: 60)
+    @count = count
+    @dur = 1.0 / fps
+  end
+
+  def frame_for(t)
+    (t / @dur).floor % @count
+  end
+
+  def dur
+    @count * @dur
+  end
+end
+
+class SpriteSheet
+  attr_reader :path, :name, :tile_grid
+
+  def initialize(path:, name:, tile_grid:)
+    @path = path
+    @name = name
+    @tile_grid = open_struct(tile_grid)
+  end
+
+  def at(i, res)
+    left = @tile_grid.x + @tile_grid.w * (i % @tile_grid.stride)
+    top = @tile_grid.y + @tile_grid.h * (i / @tile_grid.stride)
+    img = res.images[@path]
+    return img.subimage(left, top, @tile_grid.w, @tile_grid.h)
+  end
+end
+
 module SpritesheetTester
   extend self
 
@@ -16,7 +54,7 @@ module SpritesheetTester
     girl_png = "sprites/infinite_runner_pack/girl_day.png"
     boy_png = "sprites/infinite_runner_pack/boy_day.png"
 
-    run_sheet = open_struct({
+    run_sheet = SpriteSheet.new(
       path: girl_png,
       name: "girl_run",
       tile_grid: {
@@ -27,8 +65,8 @@ module SpritesheetTester
         count: 8,
         stride: 3,
       },
-    })
-    run_sheet_boy = open_struct({
+    )
+    run_sheet_boy = SpriteSheet.new(
       path: boy_png,
       name: "boy_run",
       tile_grid: {
@@ -39,8 +77,8 @@ module SpritesheetTester
         count: 8,
         stride: 3,
       },
-    })
-    jump_sheet = open_struct({
+    )
+    jump_sheet = SpriteSheet.new(
       path: girl_png,
       name: "girl_jump",
       tile_grid: {
@@ -51,8 +89,8 @@ module SpritesheetTester
         count: 8,
         stride: 3,
       },
-    })
-    jump_sheet_boy = open_struct({
+    )
+    jump_sheet_boy = SpriteSheet.new(
       path: boy_png,
       name: "boy_jump",
       tile_grid: {
@@ -63,8 +101,8 @@ module SpritesheetTester
         count: 8,
         stride: 3,
       },
-    })
-    biff_sheet = open_struct({
+    )
+    biff_sheet = SpriteSheet.new(
       path: girl_png,
       name: "girl_biff",
       tile_grid: {
@@ -75,8 +113,8 @@ module SpritesheetTester
         count: 9,
         stride: 3,
       },
-    })
-    biff_sheet_boy = open_struct({
+    )
+    biff_sheet_boy = SpriteSheet.new(
       path: boy_png,
       name: "boy_biff",
       tile_grid: {
@@ -87,7 +125,7 @@ module SpritesheetTester
         count: 9,
         stride: 3,
       },
-    })
+    )
     frame_rate = 24
     return open_struct({
              scale: 2,
@@ -144,17 +182,7 @@ module SpritesheetTester
       end
     end
 
-    fx = []
-    if input.keyboard.pressed?(Gosu::KB_F11)
-      fx << Cedar::Sidefx::ToggleFullscreen.new
-    end
-
-    TimerSystem.new.update state.reload_timer, input
-    if state.reload_timer.alarm
-      fx << Cedar::Sidefx::Reload.new
-    end
-
-    [state, fx]
+    state
   end
 
   def draw(state, output, res)
@@ -165,15 +193,14 @@ module SpritesheetTester
     sheet = state.sheets[state.selected_sheet]
 
     begin
-      # get_tile_image(sheet, 0)
-      grid = sheet.tile_grid
-      left = grid.x + grid.w * (frame % grid.stride)
-      top = grid.y + grid.h * (frame / grid.stride)
-      img = res.images[sheet.path]
-      subimg = img.subimage(left, top, grid.w, grid.h)
+      # grid = sheet.tile_grid
+      # left = grid.x + grid.w * (frame % grid.stride)
+      # top = grid.y + grid.h * (frame / grid.stride)
+      # info = { path: sheet.path,
+      #          subimage: [left, top, grid.w, grid.h] }
 
       gs << Cedar::Draw::Image.new(
-        image: subimg,
+        image: sheet.at(frame, res),
         x: 0,
         y: 36,
         z: ZOrder.SHEET,
@@ -193,9 +220,8 @@ module SpritesheetTester
     text_y = 0
     output.graphics << Cedar::Draw::Label.new(text: "Sheet #{state.selected_sheet}: name: #{sheet.name} path: #{sheet.path} w=#{res.images[sheet.path].width} h=#{res.images[sheet.path].height}", y: text_y, z: ZOrder.UI)
     text_y += 20
-    output.graphics << Cedar::Draw::Label.new(text: "  img size: ", y: text_y, z: ZOrder.UI)
-    text_y += 20
     output.graphics << Cedar::Draw::Label.new(text: "fps: #{state.frame_rate} frame: #{state.selected_frame} of #{state.sheets[state.selected_sheet].tile_grid.count}", y: text_y, z: ZOrder.UI)
+    # output.graphics << Cedar::Draw::Line.new(x1: 20, y1: 20, x2: 30, y2: 300)
   end
 
   UndergridColor1 = Gosu::Color.argb(255, 50, 100, 50)

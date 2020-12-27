@@ -15,6 +15,12 @@ module Switcher
     })
   end
 
+  def load_resources(state, res)
+    state.modules.each do |mod|
+      mod.klass.load_resources(mod.state, res) if mod.klass.respond_to?(:load_resources)
+    end
+  end
+
   def new_module_handle(mklass)
     open_struct(klass: mklass, state: mklass.new_state)
   end

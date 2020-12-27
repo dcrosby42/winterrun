@@ -23,7 +23,7 @@ class Cedar::Game < Gosu::Window
   def reset_state
     @state = @module.new_state
     @res = new_resources
-    @module.load_resources(res) if @module.respond_to?(:load_resources)
+    @module.load_resources(@state, @res) if @module.respond_to?(:load_resources)
   end
 
   def new_resources
