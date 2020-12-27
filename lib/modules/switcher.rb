@@ -11,6 +11,7 @@ module Switcher
         new_module_handle(SpritesheetTester),
       ],
       selected_index: 0,
+      reload_timer: Timer.new({ limit: 1.5, loop: true }),
     })
   end
 
@@ -29,9 +30,24 @@ module Switcher
     when input.keyboard.pressed?(Gosu::KB_R) && input.keyboard.shift?
       reset_module_state(state)
     end
+
+    fx = []
+
+    # fullscreen toggle?
+    fx << Cedar::Sidefx::ToggleFullscreen.new if input.keyboard.pressed?(Gosu::KB_F11)
+
+    # reload timer
+    TimerSystem.new.update state.reload_timer, input
+    fx << Cedar::Sidefx::Reload.new if state.reload_timer.alarm
+
+    # update module state
     mod = current(state)
-    mod.klass.update(mod.state, input, res)
-    state
+    s1, mfx = mod.klass.update(mod.state, input, res)
+    mod.state = s1 unless s1.nil?
+
+    fx.concat(mfx) if Array === mfx
+
+    [state, fx]
   end
 
   def draw(state, output, res)

@@ -90,7 +90,6 @@ module SpritesheetTester
     })
     frame_rate = 24
     return open_struct({
-             vport: open_struct(x: 0, y: 0, w: 0, h: 0),
              scale: 2,
              reload_timer: Timer.new({ limit: 1.5, loop: true }),
              sheets: [run_sheet, jump_sheet, biff_sheet, run_sheet_boy, jump_sheet_boy, biff_sheet_boy],
@@ -103,9 +102,6 @@ module SpritesheetTester
   end
 
   def update(state, input, res)
-    state.vport.w = input.window.width
-    state.vport.h = input.window.height
-
     state.scale = 1 if input.keyboard.pressed?(Gosu::KB_0)
     state.scale += 0.1 if input.keyboard.pressed?(Gosu::KB_EQUALS)
     state.scale -= 0.1 if input.keyboard.pressed?(Gosu::KB_MINUS)
