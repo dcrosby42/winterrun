@@ -6,6 +6,14 @@ module Cedar
       end
     end
 
+    Line = Struct.new(:x1, :y1, :x2, :y2, :z, :color, :color2, :mode, keyword_init: true) do
+      def draw(res)
+        c1 = color || Gosu::Color::WHITE
+        c2 = color2 || c1
+        Gosu.draw_line(x1, y1, c1, x2, y2, c2, z || 100, mode || :default)
+      end
+    end
+
     Image = Struct.new(:image, :path, :x, :y, :z, :scale_x, :scale_y, keyword_init: true) do
       def draw(res)
         (image || res.images[path || raise("Image needs :image or :path")]).draw(x, y, z || 0, scale_x || 1, scale_y || 1)
