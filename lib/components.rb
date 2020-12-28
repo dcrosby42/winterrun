@@ -1,0 +1,6 @@
+require "component"
+require "components/timer"
+require "components/pos"
+require "components/vel"
+require "components/flip"
+require "components/sprite"

@@ -37,6 +37,10 @@ class Cedar::Keyboard
       @k.keys_pressed[id] == true
     end
 
+    def released?(id)
+      @k.keys_released[id] == true
+    end
+
     def shift?
       @k.keys_down[Gosu::KB_LEFT_SHIFT] || @k.keys_down[Gosu::KB_RIGHT_SHIFT]
     end

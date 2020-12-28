@@ -12,6 +12,18 @@
         }
     },
     {
+        "name": "girl_stand",
+        "path": "infinite_runner_pack/girl_day.png",
+        "tile_grid": {
+            "x": 0,
+            "y": 72,
+            "w": 36,
+            "h": 36,
+            "count": 1,
+            "stride": 1
+        }
+    },
+    {
         "name": "girl_jump",
         "path": "infinite_runner_pack/girl_day.png",
         "tile_grid": {

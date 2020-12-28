@@ -1,5 +1,7 @@
-require "modules/bg_tester"
-require "modules/spritesheet_tester"
+require "systems/timer_system"
+require "modules/play_tester"
+# require "modules/bg_tester"
+# require "modules/spritesheet_tester"
 
 module Switcher
   extend self
@@ -7,8 +9,9 @@ module Switcher
   def new_state
     open_struct({
       modules: [
-        new_module_handle(BgTester),
-        new_module_handle(SpritesheetTester),
+        new_module_handle(PlayTester),
+      # new_module_handle(BgTester),
+      # new_module_handle(SpritesheetTester),
       ],
       selected_index: 0,
       reload_timer: Timer.new({ limit: 1.5, loop: true }),

@@ -1,12 +1,6 @@
 require "systems/timer_system"
 require "components/timer"
 
-Sprite = Component.new(:sprite, {
-  anim: nil,
-  t: 0,
-  factor: 1.0,
-})
-
 class FixedTimeline
   def initialize(count:, fps: 60)
     @count = count
@@ -19,23 +13,6 @@ class FixedTimeline
 
   def dur
     @count * @dur
-  end
-end
-
-class SpriteSheet
-  attr_reader :path, :name, :tile_grid
-
-  def initialize(path:, name:, tile_grid:)
-    @path = path
-    @name = name
-    @tile_grid = open_struct(tile_grid)
-  end
-
-  def at(i, res)
-    left = @tile_grid.x + @tile_grid.w * (i % @tile_grid.stride)
-    top = @tile_grid.y + @tile_grid.h * (i / @tile_grid.stride)
-    img = res.images(@path)
-    return img.subimage(left, top, @tile_grid.w, @tile_grid.h)
   end
 end
 
@@ -67,7 +44,7 @@ module SpritesheetTester
     girls = res.files("girl_sprite.json")
     boys = res.files("boy_sprite.json")
     [girls, boys].flatten.map do |obj|
-      SpriteSheet.new(**obj)
+      Cedar::Resources::SpriteSheet.new(**obj)
     end
   end
 

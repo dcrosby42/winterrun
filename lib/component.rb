@@ -43,9 +43,9 @@ class Component
       obj.defaults!(h)
     end
 
-    comp_class.define_method(:type) do
-      comp_type
-    end
+    comp_class.define_method(:type) do comp_type end
+
+    comp_class.define_singleton_method(:type) do comp_type end
 
     @comp_types[comp_type] = comp_class
 

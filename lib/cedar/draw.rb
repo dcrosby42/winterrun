@@ -24,6 +24,14 @@ module Cedar
       end
     end
 
+    SheetSprite = Struct.new(:sprite_id, :sprite_frame, :x, :y, :z, :angle, :center_x, :center_y, :scale_x, :scale_y, keyword_init: true) do
+      def draw(res)
+        sprite = res.sprites[sprite_id || raise(":sprite_id required")] || raise("No Sprite with sprite_id: #{sprite_id.inspect}")
+        img = sprite.image_for_frame(sprite_frame || 0, res)
+        img.draw_rot(x, y, z || 0, angle || 0, center_x || 0.5, center_y || 0.5, scale_x || 1, scale_y || 1)
+      end
+    end
+
     Label = Struct.new(:text, :font, :x, :y, :z, :scale_x, :scale_y, :color, keyword_init: true) do
       def draw(res)
         res.fonts(font || :default).draw_text(text, x || 0, y || 0, z || 0, scale_x || 1, scale_y || 1, color || Gosu::Color::WHITE)
@@ -31,8 +39,9 @@ module Cedar
     end
 
     class Sequence
-      def initialize
+      def initialize(&block)
         @drawables = []
+        block.call self if block_given?
       end
 
       def clear
