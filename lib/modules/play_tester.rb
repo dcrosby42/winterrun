@@ -1,4 +1,4 @@
-require "components"
+require "cedar/ecs"
 
 class PlayerCharacter
   def initialize

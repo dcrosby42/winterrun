@@ -1,5 +1,3 @@
-Cedar::Input = Struct.new(:window, :time, :keyboard, :mouse, :did_reload, :did_reset)
-
 class Cedar::Game < Gosu::Window
   def initialize(root_module:, caption: "Game", width: 1280, height: 720, fullscreen: false, update_interval: nil, mouse_pointer_visible: false, reload_button: Gosu::KB_R)
     super width, height

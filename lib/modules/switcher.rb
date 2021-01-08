@@ -1,7 +1,7 @@
-require "systems/timer_system"
 require "modules/play_tester"
+require "modules/ecs_tester"
 # require "modules/bg_tester"
-# require "modules/spritesheet_tester"
+require "modules/spritesheet_tester"
 
 module Switcher
   extend self
@@ -9,12 +9,13 @@ module Switcher
   def new_state
     open_struct({
       modules: [
+        new_module_handle(EcsTester),
         new_module_handle(PlayTester),
-      # new_module_handle(BgTester),
-      # new_module_handle(SpritesheetTester),
+        # new_module_handle(BgTester),
+        new_module_handle(SpritesheetTester),
       ],
       selected_index: 0,
-      reload_timer: Timer.new({ limit: 1.5, loop: true }),
+      reload_timer: Cedar::Timer.new({ limit: 1.5, loop: true }),
     })
   end
 
@@ -36,6 +37,9 @@ module Switcher
     when input.keyboard.pressed?(Gosu::KB_F2)
       switch_to_module(state, 1)
       reset_module_state(state) if input.keyboard.shift?
+    when input.keyboard.pressed?(Gosu::KB_F3)
+      switch_to_module(state, 2)
+      reset_module_state(state) if input.keyboard.shift?
     when input.keyboard.pressed?(Gosu::KB_R) && input.keyboard.shift?
       reset_module_state(state)
     end
@@ -46,7 +50,7 @@ module Switcher
     fx << Cedar::Sidefx::ToggleFullscreen.new if input.keyboard.pressed?(Gosu::KB_F11)
 
     # reload timer
-    TimerSystem.new.update state.reload_timer, input
+    Cedar.update_timer state.reload_timer, input.time.dt
     fx << Cedar::Sidefx::Reload.new if state.reload_timer.alarm
 
     # update module state

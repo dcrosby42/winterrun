@@ -1,5 +1,5 @@
-require "systems/timer_system"
-require "components/timer"
+# require "cedar/ecs/systems/timer_system"
+require "cedar/ecs"
 
 class FixedTimeline
   def initialize(count:, fps: 60)
@@ -30,26 +30,23 @@ module SpritesheetTester
     frame_rate = 24
     return open_struct({
              scale: 2,
-             reload_timer: Timer.new({ limit: 1.5, loop: true }),
+             reload_timer: Cedar::Timer.new({ limit: 1.5, loop: true }),
              sheets: nil,
              selected_sheet: 0,
              selected_frame: 0,
              playing: false,
              frame_rate: frame_rate,
-             frame_timer: Timer.new({ limit: 1.0 / frame_rate, loop: true }),
+             frame_timer: Cedar::Timer.new({ limit: 1.0 / frame_rate, loop: true }),
            })
   end
 
-  def init_sheets(res)
-    girls = res.files("girl_sprite.json")
-    boys = res.files("boy_sprite.json")
-    [girls, boys].flatten.map do |obj|
-      Cedar::Resources::SpriteSheet.new(**obj)
-    end
+  def load_resources(state, res)
+    res.sprites.load("files/girl_sprite.json")
+    res.sprites.load("files/boy_sprite.json")
   end
 
   def update(state, input, res)
-    state.sheets ||= init_sheets(res)
+    state.sheets ||= res.sprites.all
     state.scale = 1 if input.keyboard.pressed?(Gosu::KB_0)
     state.scale += 0.1 if input.keyboard.pressed?(Gosu::KB_EQUALS)
     state.scale -= 0.1 if input.keyboard.pressed?(Gosu::KB_MINUS)
@@ -80,7 +77,7 @@ module SpritesheetTester
 
     # Cycle animation
     if state.playing
-      TimerSystem.new.update state.frame_timer, input
+      Cedar.update_timer state.frame_timer, input.time.dt
       if state.frame_timer.alarm
         state.selected_frame = (state.selected_frame + 1) % state.sheets[state.selected_sheet].tile_grid.count
       end
@@ -101,7 +98,7 @@ module SpritesheetTester
     frame = state.selected_frame
     sheet = state.sheets[state.selected_sheet]
     gs << Cedar::Draw::Image.new(
-      image: sheet.at(frame, res),
+      image: sheet.image_for_frame(frame, res),
       x: 0,
       y: 36,
       z: ZOrder.SHEET,
@@ -118,7 +115,9 @@ module SpritesheetTester
     output.graphics << gs
 
     text_y = 0
-    output.graphics << Cedar::Draw::Label.new(text: "Sheet #{state.selected_sheet}: name: #{sheet.name} path: #{sheet.path} w=#{res.images(sheet.path).width} h=#{res.images(sheet.path).height}", y: text_y, z: ZOrder.UI)
+    label1 = Cedar::Draw::Label.new(text: "Sheet #{state.selected_sheet}: name: #{sheet.name} path: #{sheet.path} w=#{res.images[sheet.path].width} h=#{res.images[sheet.path].height}", y: text_y, z: ZOrder.UI)
+
+    output.graphics << label1
     text_y += 20
     output.graphics << Cedar::Draw::Label.new(text: "fps: #{state.frame_rate} frame: #{state.selected_frame} of #{state.sheets[state.selected_sheet].tile_grid.count}", y: text_y, z: ZOrder.UI)
     # output.graphics << Cedar::Draw::Line.new(x1: 20, y1: 20, x2: 30, y2: 300)

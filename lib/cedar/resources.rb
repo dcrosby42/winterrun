@@ -56,9 +56,8 @@ module Cedar
         @images[name] ||= Gosu::Image.new("res/images/#{name}", tileable: true, retro: true)
       end
 
-      def [](name)
-        get name
-      end
+      alias_method :[], :get
+      alias_method :call, :get
     end
 
     class Sprites
@@ -66,26 +65,29 @@ module Cedar
         @sheets = {}
       end
 
-      def get(id)
-        s = @sheets[id]
+      def all
+        @sheets.values
+      end
+
+      def get(name)
+        s = @sheets[name]
         if s.nil?
-          raise("No Sprite '#{id.inspect}'")
+          raise("No Sprite '#{name.inspect}'")
         end
         s
       end
 
-      def [](id)
-        get id
-      end
+      alias_method :[], :get
 
       def load(file)
         data = Resources.load_and_parse(file)
         data = [data] unless Array === data
         data.each do |sheet_info|
           sheet = SpriteSheet.new(**sheet_info) # :path, :name, :tile_grid
-          if @sheets[sheet.name]
-            raise "Duplicate SpriteSheet id #{sheet.name.inspect} from file #{file.inspect}"
-          end
+          # if @sheets[sheet.name]
+          #   raise "Duplicate SpriteSheet id #{sheet.name.inspect} from file #{file.inspect}"
+          # end
+          # puts "Sprites#load: file=#{file} sheet=#{sheet.name}"
           @sheets[sheet.name] = sheet
         end
       end

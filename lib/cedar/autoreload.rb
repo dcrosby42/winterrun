@@ -41,11 +41,11 @@ module AutoReload
     return nil if @notfound.include? file
     $:.each do |dir|
       fullpath = File.join(dir, file)
-      if File.exists? fullpath
+      if File.exist? fullpath
         return fullpath
-      elsif File.exists?(fullpath + ".rb")
+      elsif File.exist?(fullpath + ".rb")
         return fullpath + ".rb"
-      elsif File.exists?(fullpath + ".so")
+      elsif File.exist?(fullpath + ".so")
         return fullpath + ".so"
       end
     end

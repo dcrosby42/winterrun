@@ -16,7 +16,7 @@ module Cedar
 
     Image = Struct.new(:image, :path, :x, :y, :z, :scale_x, :scale_y, :subimage, keyword_init: true) do
       def draw(res)
-        img = image || res.images(path || raise("Image needs :image or :path"))
+        img = image || res.images[path || raise("Image needs :image or :path")]
         if subimage
           img = img.subimage(*subimage)
         end
@@ -34,7 +34,7 @@ module Cedar
 
     Label = Struct.new(:text, :font, :x, :y, :z, :scale_x, :scale_y, :color, keyword_init: true) do
       def draw(res)
-        res.fonts(font || :default).draw_text(text, x || 0, y || 0, z || 0, scale_x || 1, scale_y || 1, color || Gosu::Color::WHITE)
+        res.fonts[font || :default].draw_text(text, x || 0, y || 0, z || 0, scale_x || 1, scale_y || 1, color || Gosu::Color::WHITE)
       end
     end
 
@@ -58,8 +58,19 @@ module Cedar
       end
 
       def draw(res)
-        @drawables.each do |d| d.draw(res) end
+        @drawables.each do |d|
+          if d.respond_to?(:draw)
+            d.draw(res)
+          elsif d.respond_to?(:call)
+            d.call(res)
+          else
+            raise "Cedar::Draw::Sequence#draw: Item isn't drawable (needs #draw or #call): #{d.inspect}"
+          end
+        end
       end
+
+      alias_method :call, :draw
+      alias_method :[], :draw
     end
 
     class ScaleTransform < Sequence
