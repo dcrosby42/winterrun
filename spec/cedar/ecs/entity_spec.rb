@@ -35,6 +35,25 @@ describe Cedar::Entity do
       entity.add(Loc.new)
       expect { entity.add(Loc.new) }.to raise_error(Cedar::ComponentError)
     end
+
+    describe "when _listener is set" do
+      it "notifies of :add_comp" do
+        calls = []
+        entity._listener = lambda do |event_type, *params|
+          calls << [event_type, params]
+        end
+
+        c1 = Loc.new
+        entity.add(c1)
+        expect(calls[0][0]).to eq(:add_comp)
+        expect(calls[0][1]).to eq([c1])
+
+        c2 = Sprite.new
+        entity.add(c2)
+        expect(calls[1][0]).to eq(:add_comp)
+        expect(calls[1][1]).to eq([c2])
+      end
+    end
   end
 
   describe "#remove" do
@@ -62,6 +81,19 @@ describe Cedar::Entity do
           expect { entity.remove(:loc) }.to raise_error(Cedar::ComponentError, /:loc/)
         end
       end
+
+      describe "when _listener is set" do
+        it "notifies of :add_comp" do
+          calls = []
+          entity._listener = lambda do |event_type, *params|
+            calls << [event_type, params]
+          end
+
+          entity.remove(:loc)
+          expect(calls[0][0]).to eq(:remove_comp)
+          expect(calls[0][1]).to eq([loc])
+        end
+      end
     end
 
     describe "when given a Component" do
@@ -77,6 +109,19 @@ describe Cedar::Entity do
         it "raises" do
           entity.remove(:loc)
           expect { entity.remove(:loc) }.to raise_error(Cedar::ComponentError, /:loc/)
+        end
+      end
+
+      describe "when _listener is set" do
+        it "notifies of :add_comp" do
+          calls = []
+          entity._listener = lambda do |event_type, *params|
+            calls << [event_type, params]
+          end
+
+          entity.remove(:loc)
+          expect(calls[0][0]).to eq(:remove_comp)
+          expect(calls[0][1]).to eq([loc])
         end
       end
     end

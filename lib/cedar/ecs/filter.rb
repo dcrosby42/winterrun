@@ -10,6 +10,8 @@ module Cedar
   # (This is an extremely common case for entity matching.)
   # Construct with one of more component Classes or symbol names.
   class CompTypeFilter
+    attr_reader :types
+
     def initialize(*types)
       @types = types.flatten.map do |t|
         case

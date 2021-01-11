@@ -1,6 +1,7 @@
 module Cedar
   class Entity
     attr_reader :eid
+    attr_accessor :_listener # ifc: #notify(event_type, *params). Usually this is EntityStore. Optional
 
     def initialize(eid)
       @eid = eid
@@ -15,6 +16,8 @@ module Cedar
       comp.eid = eid
       @metaclass.send :define_method, comp.type do comp end
       @comps[comp.type] = comp
+      _listener.call :add_comp, comp if _listener
+      self
     end
 
     def remove(comp)
@@ -22,7 +25,8 @@ module Cedar
         if respond_to?(comp)
           send(comp).eid = nil
           @metaclass.send :remove_method, comp
-          @comps.delete comp
+          obj = @comps.delete comp
+          _listener.call :remove_comp, obj if _listener
         else
           raise(ComponentError, "Entity[#{@eid}] contains no Component of type #{comp.inspect}")
         end

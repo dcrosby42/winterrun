@@ -8,6 +8,8 @@ module Cedar
 
   # BasicSystem implements the general System interface by applying a Search and invoking
   # the given update func for each Entity returned by the Search.
+  # - search must conform to the Search interface #call(Entity[]), see search.rb.
+  # - update must conform to #call(Entity, Cedar::Input, Cedar::Resources)
   class BasicSystem
     def initialize(search, update)
       @search = search
@@ -15,7 +17,7 @@ module Cedar
     end
 
     def call(estore, input, res)
-      @search.call(estore).each do |e|
+      estore.search(@search).each do |e|
         @update.call e, input, res
       end
     end
@@ -23,6 +25,12 @@ module Cedar
     def inspect
       "<BasicSystem #{@search.inspect}>"
     end
+  end
+
+  # VERY common system pattern: A basic update system based on a component-type search.
+  def self.define_system(*types, &update)
+    search = CompSearch.new(types.flatten)
+    BasicSystem.new(search, update)
   end
 end
 
