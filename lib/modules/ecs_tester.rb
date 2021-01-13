@@ -39,7 +39,7 @@ module EcsTester
   PosSpriteSearch = CompSearch.new([Pos, Sprite])
   PosSearch = CompSearch.new([Pos])
   DrawSystem = lambda do |estore, output, res|
-    PosSearch.call(estore).each do |e|
+    estore.search(PosSearch).each do |e|
       if e.sprite
         output.graphics << Draw::SheetSprite.new(
           sprite_id: e.sprite.id,
