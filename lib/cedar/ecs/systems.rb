@@ -6,24 +6,43 @@ module Cedar
   NullSystem = lambda do |estore, input, res|
   end
 
-  # BasicSystem implements the general System interface by applying a Search and invoking
-  # the given update func for each Entity returned by the Search.
-  # - search must conform to the Search interface #call(Entity[]), see search.rb.
-  # - update must conform to #call(Entity, Cedar::Input, Cedar::Resources)
-  class BasicSystem
-    def initialize(search, update)
+  # BaseSystem provides an INCOMPLETE basis for defining Systems (through inheritance)
+  # based on a Search and assumed to iterate each resulting Entity in term
+  # by invoking #update.
+  # - Search must conform to the Search interface #call(Entity[]), see search.rb.
+  # - Subclasses must implement #update(entity, input, res)
+  class BaseSystem
+    def initialize(search)
       @search = search
-      @update = update
     end
 
     def call(estore, input, res)
       estore.search(@search).each do |e|
-        @update.call e, input, res
+        update e, input, res
       end
     end
 
+    def update(e, input, res)
+      raise "#{self.class.name} needs to override #update(entity, input, res)"
+    end
+
     def inspect
-      "<BasicSystem #{@search.inspect}>"
+      "<#{self.class.name} #{@search.inspect}>"
+    end
+  end
+
+  # BasicSystem implements the general System interface by applying a Search and invoking
+  # the given update func for each Entity returned by the Search.
+  # - search must conform to the Search interface #call(Entity[]), see search.rb.
+  # - update must conform to #call(Entity, Cedar::Input, Cedar::Resources)
+  class BasicSystem < BaseSystem
+    def initialize(search, update)
+      super search
+      @update = update
+    end
+
+    def update(e, input, res)
+      @update.call e, input, res
     end
   end
 
