@@ -19,9 +19,17 @@ class Cedar::Keyboard
     @keys_down.delete(id)
   end
 
+  # Clears "pressed" and "released" states, as those are ephemeral (meant to last only for 1 tick)
   def after_update
     @keys_pressed.clear
     @keys_released.clear
+  end
+
+  # Resets ALL button state
+  def clear
+    @keys_pressed.clear
+    @keys_released.clear
+    @keys_down.clear
   end
 
   class State
@@ -59,6 +67,16 @@ class Cedar::Keyboard
 
     def any?
       @k.keys_down.any? || @k.keys_released.any?
+    end
+
+    def self.for_testing
+      kbd = Cedar::Keyboard.new
+      class << kbd.state
+        attr_reader
+
+        def keyboard; @k; end
+      end
+      kbd.state
     end
   end
 end

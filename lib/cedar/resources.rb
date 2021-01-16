@@ -1,6 +1,6 @@
 module Cedar
   class Resources
-    attr_reader :data, :fonts, :images, :sprites, :files
+    attr_reader :data, :fonts, :images, :sprites, :files, :anims
 
     def initialize
       @images = Images.new
@@ -9,6 +9,7 @@ module Cedar
       @fonts[:default] = Gosu::Font.new(20)
       @data = OpenStruct.new
       @sprites = Sprites.new
+      @anims = {}
     end
 
     class << self

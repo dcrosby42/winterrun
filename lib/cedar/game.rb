@@ -38,7 +38,7 @@ class Cedar::Game < Gosu::Window
     # did_reset = check_for_reset
     @time.update_to Gosu.milliseconds
 
-    @input.window = self               # input.time #dt #dt_millis #millis
+    @input.window = self
     @input.time = @time                # input.time #dt #dt_millis #millis
     @input.keyboard = @keyboard.state
     @input.mouse = @mouse

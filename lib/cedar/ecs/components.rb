@@ -6,4 +6,5 @@ module Cedar
   Flip = Component.new(:flip, { x: false, y: false })
   Timer = Component.new(:timer, { t: 0, limit: 1, alarm: false, loop: false })
   Sprite = Component.new(:sprite, { id: nil, frame: 0, scale_x: 1, scale_y: 1 })
+  Anim = Component.new(:anim, { id: nil, t: 0, factor: 1 })
 end
