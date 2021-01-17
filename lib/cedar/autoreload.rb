@@ -41,7 +41,7 @@ module AutoReload
     return nil if @notfound.include? file
     $:.each do |dir|
       fullpath = File.join(dir, file)
-      if File.exist? fullpath
+      if File.exist?(fullpath) && !File.directory?(fullpath)
         return fullpath
       elsif File.exist?(fullpath + ".rb")
         return fullpath + ".rb"
@@ -122,7 +122,7 @@ module AutoReload
   def self.should_track?(file)
     return true if @prefix.nil?
     found = locate(file)
-    !@prefix.nil? and found and found.start_with?(@prefix)
+    found and found.start_with?(@prefix)
   end
 end
 
