@@ -60,7 +60,7 @@ module PlayTester
 
   def load_resources(state, res)
     puts "PlayTester.load_resources"
-    res.sprites.load("files/girl_sprite.json")
+    res.sprites.load("girl_sprite.json")
   end
 
   def update(state, input, res)

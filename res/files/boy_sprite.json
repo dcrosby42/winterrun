@@ -1,5 +1,6 @@
 [
     {
+        "type": "grid_sprite_sheet",
         "name": "boy_run",
         "path": "infinite_runner_pack/boy_day.png",
         "tile_grid": {
@@ -12,6 +13,7 @@
         }
     },
     {
+        "type": "grid_sprite_sheet",
         "name": "boy_jump",
         "path": "infinite_runner_pack/boy_day.png",
         "tile_grid": {
@@ -24,6 +26,7 @@
         }
     },
     {
+        "type": "grid_sprite_sheet",
         "name": "boy_biff",
         "path": "infinite_runner_pack/boy_day.png",
         "tile_grid": {

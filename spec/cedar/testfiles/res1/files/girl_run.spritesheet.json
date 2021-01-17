@@ -1,0 +1,14 @@
+
+{
+    "type": "grid_sprite_sheet",
+    "name": "girl_run",
+    "path": "girl_sprite_sheet.png",
+    "tile_grid": {
+        "x": 0,
+        "y": 36,
+        "w": 36,
+        "h": 36,
+        "count": 8,
+        "stride": 3
+    }
+}

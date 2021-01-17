@@ -52,22 +52,26 @@ module EcsTester
   end
 
   def new_state
-    state = open_struct({
-      estore: EntityStore.new,
-      system: MySystem,
-    })
-    state.estore.new_entity do |e|
+    estore = EntityStore.new
+    estore.new_entity do |e|
       e.add Girl.new(dir: :right, player: 1)
       e.add Sprite.new(id: "girl_stand", scale_x: 2, scale_y: 2)
       e.add Anim.new(id: "girl_stand", factor: 1)
       e.add Pos.new(x: 100, y: 100)
       e.add Vel.new
     end
-    state
+    estore.new_entity do |e|
+      e.add Sprite.new(id: "bg1")
+    end
+
+    open_struct({
+      estore: estore,
+      system: MySystem,
+    })
   end
 
   def load_resources(state, res)
-    res.sprites.load("files/girl_sprite.json")
+    res.sprites.load("girl_sprite.json")
     res.anims["girl_run"] = lambda do |t|
       ct = res.sprites["girl_run"].tile_grid.count
       frame = (t * GirlFps).to_i % ct
@@ -78,6 +82,15 @@ module EcsTester
       frame = (t * GirlFps).to_i % ct
       ["girl_stand", frame]
     end
+    res.sprites.load({
+      name: "bg1",
+      type: "image_sprite",
+      paths: ["snowy_forest/Backgrounds/background layer3.png"],
+    })
+    # { path: "snowy_forest/Backgrounds/background layer0.png", parallax: 0.125 },
+    # { path: "snowy_forest/Backgrounds/background layer1.png", parallax: 0.25 },
+    # { path: "snowy_forest/Backgrounds/background layer2.png", parallax: 0.5 },
+    # { path: "snowy_forest/Backgrounds/background layer3.png", parallax: 1 },
   end
 
   def update(state, input, res)

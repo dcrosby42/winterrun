@@ -3,7 +3,7 @@ module Cedar
     attr_reader :graphics
 
     def initialize
-      @graphics = Cedar::Draw::Sequence.new
+      @graphics = Cedar::Draw::Group.new
     end
 
     def reset

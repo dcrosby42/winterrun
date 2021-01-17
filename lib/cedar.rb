@@ -1,4 +1,26 @@
-module Cedar; end
+module Cedar
+  # Set/get Cedar runtime mode.  :dev :prod :test
+  # Impacts behavior of auto reload checking, resource name collision checks etc.
+  def self.mode(m = nil)
+    if !m.nil?
+      m = m.to_sym
+      raise ("Cedar.mode accepts one of :dec, :test, :prod") unless [:dev, :prod, :test].include?(m)
+      @_mode = m
+    end
+    if @_mode.nil?
+      if ENV["CEDAR_MODE"]
+        if [:dev, :prod, :test].include?(ENV["CEDAR_MODE"].to_sym)
+          @_mode = ENV["CEDAR_MODE"].to_sym
+        else
+          $stderr.puts "!! CEDAR_MODE must be 'dev' or 'test' or 'prod', not #{ENV["CEDAR_MODE"].inspect}"
+        end
+      end
+      @_mode ||= :dev  # fallback
+    end
+    @_mode
+  end
+end
+
 module Cedar::Helpers; end
 
 require "gosu"

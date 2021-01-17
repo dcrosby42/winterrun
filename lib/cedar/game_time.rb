@@ -16,10 +16,15 @@ class Cedar::GameTime
     @dt || (1.0 / 60) # defaults ot nominal frame delta for first game tick
   end
 
+  def t
+    @t || 0.0
+  end
+
   def update_to(time_millis)
     if @millis
       @dt_millis = time_millis - @millis
       @dt = @dt_millis / 1000.0
+      @t = @millis / 1000.0
     end
     @millis = time_millis
   end

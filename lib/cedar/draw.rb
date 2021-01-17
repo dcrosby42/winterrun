@@ -27,7 +27,7 @@ module Cedar
     SheetSprite = Struct.new(:sprite_id, :sprite_frame, :x, :y, :z, :angle, :center_x, :center_y, :scale_x, :scale_y, keyword_init: true) do
       def draw(res)
         sprite = res.sprites[sprite_id || raise(":sprite_id required")] || raise("No Sprite with sprite_id: #{sprite_id.inspect}")
-        img = sprite.image_for_frame(sprite_frame || 0, res)
+        img = sprite.image_for_frame(sprite_frame || 0)
         img.draw_rot(x, y, z || 0, angle || 0, center_x || 0.5, center_y || 0.5, scale_x || 1, scale_y || 1)
       end
     end
@@ -38,7 +38,7 @@ module Cedar
       end
     end
 
-    class Sequence
+    class Group
       def initialize(&block)
         @drawables = []
         block.call self if block_given?
@@ -48,7 +48,7 @@ module Cedar
         @drawables.clear
       end
 
-      def <<(dr)
+      def add(dr)
         case dr
         when Array
           @drawables.concat(dr)
@@ -57,6 +57,9 @@ module Cedar
         end
       end
 
+      alias_method :concat, :add
+      alias_method :<<, :add
+
       def draw(res)
         @drawables.each do |d|
           if d.respond_to?(:draw)
@@ -64,7 +67,7 @@ module Cedar
           elsif d.respond_to?(:call)
             d.call(res)
           else
-            raise "Cedar::Draw::Sequence#draw: Item isn't drawable (needs #draw or #call): #{d.inspect}"
+            raise "Cedar::Draw::Group#draw: Item isn't drawable (needs #draw or #call): #{d.inspect}"
           end
         end
       end
@@ -73,7 +76,7 @@ module Cedar
       alias_method :[], :draw
     end
 
-    class ScaleTransform < Sequence
+    class ScaleTransform < Group
       def initialize(scale_x, scale_y = nil)
         super()
         @scale_x = scale_x

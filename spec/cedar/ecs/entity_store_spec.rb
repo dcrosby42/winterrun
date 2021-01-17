@@ -1,5 +1,4 @@
 require "spec_helper"
-require "cedar/ecs"
 
 describe Cedar::Entity do
   module Comps

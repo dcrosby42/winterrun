@@ -41,12 +41,12 @@ module SpritesheetTester
   end
 
   def load_resources(state, res)
-    res.sprites.load("files/girl_sprite.json")
-    res.sprites.load("files/boy_sprite.json")
+    res.sprites.load("girl_sprite.json")
+    res.sprites.load("boy_sprite.json")
   end
 
   def update(state, input, res)
-    state.sheets ||= res.sprites.all
+    state.sheets ||= res.sprites.all.select do |s| s.instance_of?(Cedar::Resources::GridSpriteSheet) end
     state.scale = 1 if input.keyboard.pressed?(Gosu::KB_0)
     state.scale += 0.1 if input.keyboard.pressed?(Gosu::KB_EQUALS)
     state.scale -= 0.1 if input.keyboard.pressed?(Gosu::KB_MINUS)
@@ -98,7 +98,7 @@ module SpritesheetTester
     frame = state.selected_frame
     sheet = state.sheets[state.selected_sheet]
     gs << Cedar::Draw::Image.new(
-      image: sheet.image_for_frame(frame, res),
+      image: sheet.image_for_frame(frame),
       x: 0,
       y: 36,
       z: ZOrder.SHEET,
