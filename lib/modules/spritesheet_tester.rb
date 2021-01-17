@@ -93,7 +93,7 @@ module SpritesheetTester
   end
 
   def draw(state, output, res)
-    gs = Cedar::Draw::ScaleTransform.new(state.scale)
+    gs = Cedar::Draw::Scale.new(state.scale)
 
     frame = state.selected_frame
     sheet = state.sheets[state.selected_sheet]

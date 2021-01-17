@@ -76,7 +76,7 @@ module BgTester
     # dbglines = dbgs.map(&:inspect)
 
     # Draw all the background tiles
-    zoomed = Cedar::Draw::ScaleTransform.new(state.scale)
+    zoomed = Cedar::Draw::Scale.new(state.scale)
     zoomed << ss
     output.graphics << zoomed
 

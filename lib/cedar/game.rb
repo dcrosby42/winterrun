@@ -41,7 +41,7 @@ class Cedar::Game < Gosu::Window
 
     s1, sidefx = @module.update(@state, @input, @res)
     @state = s1 unless s1.nil?
-    @keyboard.after_update
+    @input.keyboard.after_update
     handle_sidefx sidefx
   end
 
@@ -65,11 +65,11 @@ class Cedar::Game < Gosu::Window
   end
 
   def button_down(id)
-    @keyboard.button_down(id)
+    @input.keyboard.button_down(id)
   end
 
   def button_up(id)
-    @keyboard.button_up(id)
+    @input.keyboard.button_up(id)
   end
 
   def needs_cursor?

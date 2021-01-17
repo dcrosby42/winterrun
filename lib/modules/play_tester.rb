@@ -74,7 +74,7 @@ module PlayTester
   )
 
   def draw(state, output, res)
-    output.graphics << Cedar::Draw::ScaleTransform.new(2) do |t|
+    output.graphics << Cedar::Draw::Scale.new(2) do |t|
       t << state.p1.render(res)
     end
   end

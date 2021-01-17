@@ -64,9 +64,12 @@ module Cedar
       end
 
       def get(name)
-        raise("Can't get image #{name.inspect}") if name.nil? || name.length == 0
-        name = @res.path("images/#{name}")
-        @images[name] ||= Gosu::Image.new(name, tileable: true, retro: true)
+        @images[name] ||= begin
+            raise("Can't get image #{name.inspect}") if name.nil? || name.length == 0
+            iname = @res.path("images/#{name}")
+            img = Gosu::Image.new(iname, tileable: true, retro: true)
+            img
+          end
       end
 
       alias_method :[], :get
@@ -132,7 +135,6 @@ module Cedar
           if @sheets[sheet.name]
             raise "Duplicate SpriteSheet id #{sheet.name.inspect} from file #{file.inspect}"
           end
-          puts "Sprites#load: file=#{file} sheet=#{sheet.name}"
         end
 
         @sheets[sheet.name] = sheet
@@ -149,7 +151,7 @@ module Cedar
     # A Sprite implementation based on a sprite sheet definition.
     # Sprite sheet {:name, :path, tile_grid:{:x,:y,:w,:h,:count,:stride}}
     class GridSpriteSheet
-      attr_reader :path, :name, :tile_grid
+      attr_reader :path, :name, :tile_grid, :center_x, :center_y
 
       def initialize(res:, path:, name:, type:, tile_grid:)
         @res = res
@@ -176,7 +178,7 @@ module Cedar
 
     # A Sprite implementation based simply on one or more full images.
     class ImageSprite
-      attr_reader :name, :paths
+      attr_reader :name, :paths, :center_x, :center_y
 
       def initialize(res:, name:, type:, path: nil, paths: nil)
         @res = res

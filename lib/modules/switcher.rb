@@ -1,5 +1,5 @@
 require "modules/play_tester"
-require "modules/ecs_tester"
+require "runlevel"
 # require "modules/bg_tester"
 require "modules/spritesheet_tester"
 
@@ -9,7 +9,7 @@ module Switcher
   def new_state
     open_struct({
       modules: [
-        new_module_handle(EcsTester),
+        new_module_handle(RunLevel),
         new_module_handle(PlayTester),
         # new_module_handle(BgTester),
         new_module_handle(SpritesheetTester),

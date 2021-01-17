@@ -46,19 +46,19 @@ class Cedar::Keyboard
   end
 
   def shift?
-    keys_down[Gosu::KB_LEFT_SHIFT] || @k.keys_down[Gosu::KB_RIGHT_SHIFT]
+    keys_down[Gosu::KB_LEFT_SHIFT] || keys_down[Gosu::KB_RIGHT_SHIFT]
   end
 
   def control?
-    keys_down[Gosu::KB_LEFT_CONTROL] || @k.keys_down[Gosu::KB_RIGHT_CONTROL]
+    keys_down[Gosu::KB_LEFT_CONTROL] || keys_down[Gosu::KB_RIGHT_CONTROL]
   end
 
   def alt?
-    keys_down[Gosu::KB_LEFT_ALT] || @k.keys_down[Gosu::KB_RIGHT_ALT]
+    keys_down[Gosu::KB_LEFT_ALT] || keys_down[Gosu::KB_RIGHT_ALT]
   end
 
   def meta?
-    keys_down[Gosu::KB_LEFT_META] || @k.keys_down[Gosu::KB_RIGHT_META]
+    keys_down[Gosu::KB_LEFT_META] || keys_down[Gosu::KB_RIGHT_META]
   end
 
   def any?
