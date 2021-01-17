@@ -8,9 +8,6 @@ class Cedar::Game < Gosu::Window
     @mouse_pointer_visible = false
     @reload_button = reload_button
 
-    @keyboard = Cedar::Keyboard.new
-    @mouse = Cedar::Mouse.new
-    @time = Cedar::GameTime.new
     @input = Cedar::Input.new
     @output = Cedar::Output.new
 
@@ -36,12 +33,9 @@ class Cedar::Game < Gosu::Window
   def update
     did_reload = check_for_reload
     # did_reset = check_for_reset
-    @time.update_to Gosu.milliseconds
+    @input.time.update_to Gosu.milliseconds
 
     @input.window = self
-    @input.time = @time                # input.time #dt #dt_millis #millis
-    @input.keyboard = @keyboard.state
-    @input.mouse = @mouse
     @input.did_reload = did_reload
     @input.did_reset = false
 
@@ -104,14 +98,14 @@ class Cedar::Game < Gosu::Window
   end
 
   def check_for_reload
-    if @keyboard.state.alt? and @keyboard.state.pressed?(@reload_button)
+    if @input.keyboard.alt? and @input.keyboard.pressed?(@reload_button)
       return reload_code
     end
     false
   end
 
   # def check_for_reset
-  #   if @keyboard.state.shift? and @keyboard.state.pressed?(@reload_button)
+  #   if @input.keyboard.shift? and @input.keyboard.pressed?(@reload_button)
   #     reset_state
   #     puts "State reset"
   #     true
