@@ -1,20 +1,20 @@
 require "spec_helper"
-require "modules/ecs_tester"
+require "run_level"
 
-describe "stuff in the ecs_tester module" do
-  let (:state) { EcsTester.new_state }
+describe "stuff in the RunLevel module" do
+  let (:state) { RunLevel.new_state }
   let (:res) { Cedar::Resources.new }
   let (:estore) { state.estore }
   let (:input) { Cedar::Input.new }
 
   before do
-    EcsTester.load_resources(state, res)
+    RunLevel.load_resources(state, res)
   end
 
   describe "'girl_run' anim" do
     it "properly selects sprite frames based on time" do
       girl_run = res.anims["girl_run"]
-      tick = 1.0 / EcsTester::GirlFps
+      tick = 1.0 / RunLevel::GirlFps
       expect(girl_run[0]).to eq(["girl_run", 0])
       expect(girl_run[0.03]).to eq(["girl_run", 0])
       expect(girl_run[tick]).to eq(["girl_run", 1])
@@ -28,7 +28,7 @@ describe "stuff in the ecs_tester module" do
   describe "'girl_stand' anim" do
     it "properly selects sprite frames based on time" do
       girl_stand = res.anims["girl_stand"]
-      tick = 1.0 / EcsTester::GirlFps
+      tick = 1.0 / RunLevel::GirlFps
       expect(girl_stand[0]).to eq(["girl_stand", 0])
       expect(girl_stand[0.03]).to eq(["girl_stand", 0])
       expect(girl_stand[tick]).to eq(["girl_stand", 0])
@@ -43,14 +43,14 @@ describe "stuff in the ecs_tester module" do
       end
     }
     let(:res) { Cedar::Resources.new }
-    let(:system) { EcsTester::AnimSystem }
+    let(:system) { RunLevel::AnimSystem }
 
-    it "works" do
+    it "increments animation time and updates the sprite" do
       a1_called_with = nil
       res.anims["a1"] = lambda do |t| a1_called_with = t; ["s1", 42] end
       e1 = estore.new_entity do |e|
         e.add Cedar::Sprite.new
-        e.add Cedar::Anim.new
+        e.add Cedar::Anim.new(id: "a1")
       end
 
       input.time.dt = 0.1
@@ -58,8 +58,15 @@ describe "stuff in the ecs_tester module" do
       system.call(estore, input, res)
 
       expect(e1.anim.t).to eq(0.1)
+      expect(a1_called_with).to eq(e1.anim.t)
       expect(e1.sprite.id).to eq("s1")
       expect(e1.sprite.frame).to eq(42)
+
+      system.call(estore, input, res)
+      system.call(estore, input, res)
+
+      expect(e1.anim.t).to be_within(0.0001).of(0.3)
+      expect(a1_called_with).to eq(e1.anim.t)
     end
   end
 end
