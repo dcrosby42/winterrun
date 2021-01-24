@@ -14,20 +14,22 @@ module RunLevel
     end
 
     if e.camera.follow
+      # e.follower.off_x = 200
+      # e.follower.off_y = 360
       FollowerSystem.call(estore, input, res)
       return
     end
 
     mx = 0
     my = 0
-    if input.keyboard.down?(Gosu::KB_J) # down
+    if input.keyboard.down?(Gosu::KB_S) # down
       my = 1
-    elsif input.keyboard.down?(Gosu::KB_K) # up
+    elsif input.keyboard.down?(Gosu::KB_W) # up
       my = -1
     end
-    if input.keyboard.down?(Gosu::KB_H) # left
+    if input.keyboard.down?(Gosu::KB_A) # left
       mx = -1
-    elsif input.keyboard.down?(Gosu::KB_L) # right
+    elsif input.keyboard.down?(Gosu::KB_D) # right
       mx = 1
     end
     spd = 100

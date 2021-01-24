@@ -5,11 +5,10 @@ module Cedar
       def right; x + w; end
       def top; y; end
       def bottom; y + h; end
-      def half_h; h / 2; end
-      def half_w; w / 2; end
+      def half_h; h / 2.0; end
+      def half_w; w / 2.0; end
       def center_x; x + half_w; end
       def center_y; y + half_h; end
-      def center; [center_x, center_y]; end
 
       def mul(mx, my)
         r = clone
@@ -21,9 +20,18 @@ module Cedar
       end
     end
 
-    Rect = Struct.new(:x, :y, :w, :h, keyword_init: true) do
+    class Rect
       include RectOps
+      attr_accessor :x, :y, :w, :h
+
+      def initialize(x: 0, y: 0, w: 0, h: 0)
+        @x = x
+        @y = y
+        @w = w
+        @h = h
+      end
     end
+
     Vec2 = Struct.new(:x, :y)
     Point = Vec2
   end

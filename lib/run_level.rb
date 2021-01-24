@@ -4,9 +4,9 @@ module RunLevel
 end
 
 require "cedar/ecs"
-require "runlevel/entities"
-require "runlevel/girl"
-require "runlevel/camera"
+require "run_level/entities"
+require "run_level/girl"
+require "run_level/camera"
 
 module RunLevel
   extend self
@@ -26,7 +26,7 @@ module RunLevel
   end
 
   FollowTarget = Component.new(:follow_target, { name: nil })
-  Follower = Component.new(:follower, { target_name: nil })
+  Follower = Component.new(:follower, { target_name: nil, off_x: 0, off_y: 0 })
 
   _follower_search = CompSearch.new(Follower, Pos)
   _follow_target_search = CompSearch.new(FollowTarget, Pos)
@@ -34,8 +34,8 @@ module RunLevel
     estore.search(_follower_search).each do |ef|
       want = ef.follower.target_name
       et = estore.search(_follow_target_search).find do |et| want == et.follow_target.name end
-      ef.pos.x = et.pos.x - 20
-      ef.pos.y = et.pos.y - 20
+      ef.pos.x = et.pos.x - ef.follower.off_x
+      ef.pos.y = et.pos.y - ef.follower.off_y
     end
   end
 
@@ -49,22 +49,27 @@ module RunLevel
     })
   end
 
-  UpdateSystem = chain_systems(
-    GirlSystem,
-    AnimSystem,
-    MotionSystem,
-    CameraManualControlSystem,
-    # FollowerSystem
-  )
+  # UpdateSystem = chain_systems(
+  #   GirlSystem,
+  #   AnimSystem,
+  #   MotionSystem,
+  #   CameraManualControlSystem,
+  #   # FollowerSystem
+  # )
 
   def update(state, input, res)
-    state.debugs.clear
-    state.debugs << "DUder"
-    UpdateSystem.call(state.estore, input, res)
+    # UpdateSystem.call(state.estore, input, res)
+    [GirlSystem,
+     AnimSystem,
+     MotionSystem,
+     CameraManualControlSystem].each do |system|
+      system.call state.estore, input, res
+    end
+
+    state.window_w = input.window.width
+    state.window_h = input.window.height
     state
   end
-
-  Debug_watch_search = CompSearch.new(DebugWatch)
 
   def draw(state, output, res)
     @cam_search ||= CompSearch.new(Camera, Pos)
@@ -72,8 +77,9 @@ module RunLevel
 
     cam = state.estore.search(@cam_search).first
     if cam
-      output.graphics << Draw::Translate.new(-cam.pos.x, -cam.pos.y) do |tr|
-        tr << Draw::Scale.new(cam.camera.zoom) do |g|
+      s = cam.camera.zoom
+      output.graphics << Draw::Translate.new(-cam.pos.x * s, -cam.pos.y * s) do |tr|
+        tr << Draw::Scale.new(s) do |g|
           state.estore.search(@sprite_search).each do |e|
             g << Draw::SheetSprite.new(
               sprite_id: e.sprite.id,
@@ -91,32 +97,65 @@ module RunLevel
       end
     end
 
-    output.graphics << Draw::Rect.new(x: 0, y: 500, z: 100, w: 100, h: 100)
-
-    msgs = []
-    msgs.concat(state.debugs)
-    state.estore.search(Debug_watch_search).each do |e|
-      label = e.debug_watch.label
-      e.debug_watch.watches.each do |cname, thing|
-        comp = e.send(cname)
-        if thing == true
-          msgs << "#{label} #{comp.to_s}"
-        elsif Symbol === thing
-          msgs << "#{label} #{thing}: #{comp.send(thing)}"
-        elsif Array === thing
-          str = thing.map do |prop|
-            "#{prop}: #{comp.send(prop)}"
-          end.join(" ")
-          msgs << "#{label} #{str}"
+    #
+    # Grid lines
+    #
+    if false
+      gridsize = 100
+      (0..state.window_w).step(gridsize).each do |x|
+        output.graphics << Draw::Line.new(x1: x, y1: 0, x2: x, y2: state.window_h, z: 98)
+        (0..state.window_h).step(gridsize).each do |y|
+          output.graphics << Draw::Line.new(x1: 0, y1: y, x2: state.window_w, y2: y, z: 98)
         end
       end
     end
 
+    #
+    # Debug text
+    #
+    msgs = get_debug_messages(state).to_a
     dbg_y = 0
     lh = 20
+    z = 100
+    bgc = Gosu::Color.rgba(0, 0, 0, 80)
     msgs.each do |msg|
-      output.graphics << Draw::Label.new(text: msg, y: dbg_y, z: 100)
+      output.graphics << Draw::Rect.new(x: 0, y: dbg_y, w: 400, h: lh, z: z - 1, color: bgc)
+      output.graphics << Draw::Label.new(text: msg, y: dbg_y, z: z)
       dbg_y += lh
+    end
+  end
+
+  Debug_watch_search = CompSearch.new(DebugWatch)
+
+  def dbg_fmt(val)
+    case val
+    when Float
+      val.round(2)
+    else
+      val
+    end
+  end
+
+  def get_debug_messages(state)
+    Enumerator.new do |y|
+      y << "Window size: #{state.window_w}, #{state.window_h}"
+
+      state.estore.search(Debug_watch_search).each do |e|
+        label = e.debug_watch.label
+        e.debug_watch.watches.each do |cname, thing|
+          comp = e.send(cname)
+          if thing == true
+            y << "#{label} #{comp.to_s}"
+          elsif Symbol === thing
+            y << "#{label} #{thing}: #{dbg_fmt comp.send(thing)}"
+          elsif Array === thing
+            str = thing.map do |prop|
+              "#{prop}: #{dbg_fmt comp.send(prop)}"
+            end.join(" ")
+            y << "#{label} #{str}"
+          end
+        end
+      end
     end
   end
 end
