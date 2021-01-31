@@ -7,6 +7,7 @@ require "cedar/ecs"
 require "run_level/entities"
 require "run_level/girl"
 require "run_level/camera"
+require "run_level/proto"
 
 module RunLevel
   extend self
@@ -45,7 +46,11 @@ module RunLevel
 
     open_struct({
       estore: estore,
-      debugs: [],
+      grid_lines: {
+        show: true,
+        step_x: 100,
+        step_y: 100,
+      },
     })
   end
 
@@ -62,7 +67,8 @@ module RunLevel
     [GirlSystem,
      AnimSystem,
      MotionSystem,
-     CameraManualControlSystem].each do |system|
+     CameraManualControlSystem,
+     ParalaxSystem].each do |system|
       system.call state.estore, input, res
     end
 
@@ -100,11 +106,10 @@ module RunLevel
     #
     # Grid lines
     #
-    if false
-      gridsize = 100
-      (0..state.window_w).step(gridsize).each do |x|
+    if state.grid_lines.show
+      (0..state.window_w).step(state.grid_lines.step_x).each do |x|
         output.graphics << Draw::Line.new(x1: x, y1: 0, x2: x, y2: state.window_h, z: 98)
-        (0..state.window_h).step(gridsize).each do |y|
+        (0..state.window_h).step(state.grid_lines.step_y).each do |y|
           output.graphics << Draw::Line.new(x1: 0, y1: y, x2: state.window_w, y2: y, z: 98)
         end
       end
@@ -117,15 +122,14 @@ module RunLevel
     dbg_y = 0
     lh = 20
     z = 100
+    w = output.window.width
     bgc = Gosu::Color.rgba(0, 0, 0, 80)
     msgs.each do |msg|
-      output.graphics << Draw::Rect.new(x: 0, y: dbg_y, w: 400, h: lh, z: z - 1, color: bgc)
+      output.graphics << Draw::Rect.new(x: 0, y: dbg_y, w: w, h: lh, z: z - 1, color: bgc)
       output.graphics << Draw::Label.new(text: msg, y: dbg_y, z: z)
       dbg_y += lh
     end
   end
-
-  Debug_watch_search = CompSearch.new(DebugWatch)
 
   def dbg_fmt(val)
     case val
@@ -136,11 +140,13 @@ module RunLevel
     end
   end
 
+  Debug_search = CompSearch.new(DebugWatch)
+
   def get_debug_messages(state)
     Enumerator.new do |y|
       y << "Window size: #{state.window_w}, #{state.window_h}"
 
-      state.estore.search(Debug_watch_search).each do |e|
+      state.estore.search(Debug_search).each do |e|
         label = e.debug_watch.label
         e.debug_watch.watches.each do |cname, thing|
           comp = e.send(cname)

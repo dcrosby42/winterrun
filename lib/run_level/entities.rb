@@ -4,7 +4,12 @@ module RunLevel
       e.add Camera.new(zoom: 2, follow: true)
       e.add Pos.new(x: 0, y: 240)
       e.add Follower.new(target_name: "girl", off_x: 200, off_y: 360)
-      e.add DebugWatch.new(label: "cam", watches: { pos: [:x, :y], camera: [:zoom, :follow] })
+      watches = {
+        pos: [:x, :y],
+        camera: [:zoom, :follow, :native_x, :native_y, :native_w, :native_h, :world_w, :world_h],
+        follower: [:off_x, :off_y],
+      }
+      e.add DebugWatch.new(label: "cam", watches: watches)
     end
 
     estore.new_entity do |e|
@@ -17,21 +22,30 @@ module RunLevel
       e.add DebugWatch.new(label: "girl", watches: { pos: [:x, :y] })
     end
 
+    # estore.new_entity do |e|
+    #   e.add Sprite.new(id: "bg_l0")
+    #   e.add Pos.new(x: 0, y: 0, z: 0)
+    #   e.add BackgroundLayer.new(layer: 0, paralax: 0.125)
+    # end
+    # estore.new_entity do |e|
+    #   e.add Sprite.new(id: "bg_l1")
+    #   e.add Pos.new(x: 0, y: 0, z: 1)
+    #   e.add BackgroundLayer.new(layer: 1, paralax: 0.25)
+    # end
+    # estore.new_entity do |e|
+    #   e.add Sprite.new(id: "bg_l2")
+    #   e.add Pos.new(x: 0, y: 0, z: 3)
+    #   e.add BackgroundLayer.new(layer: 2, paralax: 0.5)
+    # end
+    # estore.new_entity do |e|
+    #   e.add Sprite.new(id: "bg_l3")
+    #   e.add Pos.new(x: 0, y: 0, z: 4)
+    #   e.add BackgroundLayer.new(layer: 3, paralax: 1)
+    # end
+
     estore.new_entity do |e|
-      e.add Sprite.new(id: "bg_l0")
-      e.add Pos.new(x: 0, y: 0, z: 0)
-    end
-    estore.new_entity do |e|
-      e.add Sprite.new(id: "bg_l1")
-      e.add Pos.new(x: 0, y: 0, z: 1)
-    end
-    estore.new_entity do |e|
-      e.add Sprite.new(id: "bg_l2")
-      e.add Pos.new(x: 0, y: 0, z: 3)
-    end
-    estore.new_entity do |e|
-      e.add Sprite.new(id: "bg_l3")
-      e.add Pos.new(x: 0, y: 0, z: 4)
+      e.add ProtoMolecule.new(name: "paralax", data: open_struct)
+      e.add DebugWatch.new(label: "girl", watches: { proto_molecule: [:data] })
     end
   end
 
@@ -67,9 +81,5 @@ module RunLevel
       type: "image_sprite",
       paths: ["snowy_forest/Backgrounds/background layer3.png"],
     })
-    # { path: "snowy_forest/Backgrounds/background layer0.png", parallax: 0.125 },
-    # { path: "snowy_forest/Backgrounds/background layer1.png", parallax: 0.25 },
-    # { path: "snowy_forest/Backgrounds/background layer2.png", parallax: 0.5 },
-    # { path: "snowy_forest/Backgrounds/background layer3.png", parallax: 1 },
   end
 end

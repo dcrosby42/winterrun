@@ -2,24 +2,39 @@ module RunLevel
   include Cedar
   extend Cedar::Helpers
 
-  Camera = Component.new(:camera, { zoom: 1, follow: true })
+  Camera = Component.new(:camera, { zoom: 1, follow: true, native_x: 0, native_y: 0, native_w: 0, native_h: 0, world_w: 0, world_h: 0 })
 
-  _cam_search = CompSearch.new(Camera, Pos)
-  # CameraManualControlSystem = define_system(Camera, Pos) do |e, input, res|
+  CamSearch = CompSearch.new(Camera, Pos)
+
   CameraManualControlSystem = lambda do |estore, input, res|
-    e = estore.search(_cam_search).first || return
+    e = estore.search(CamSearch).first || return
 
-    if input.keyboard.pressed?(Gosu::KB_C) && input.keyboard.shift?
+    # Keyboard input: Shift-F toggles "follow" behavior
+    if input.keyboard.pressed?(Gosu::KB_F) && input.keyboard.shift?
       e.camera.follow = !e.camera.follow
     end
 
-    if e.camera.follow
-      # e.follower.off_x = 200
-      # e.follower.off_y = 360
-      FollowerSystem.call(estore, input, res)
-      return
+    # Keyboard zoom control: 0, -, +
+    if input.keyboard.pressed?(Gosu::KB_EQUALS)
+      e.camera.zoom += 0.1
+    elsif input.keyboard.pressed?(Gosu::KB_MINUS)
+      e.camera.zoom -= 0.1
+    end
+    if input.keyboard.pressed?(Gosu::KB_0)
+      e.camera.zoom = 1
     end
 
+    if e.camera.follow
+      # Adjust following height based on zoom level, to keep our target from disappearing off the bottom:
+      e.follower.off_y = [input.window.height / e.camera.zoom, 360].min
+      # This will update camera pos values based on target entity:
+      FollowerSystem.call(estore, input, res)
+
+      update_native_coords e, input
+      return # in follow mode, don't process camera movement controls
+    end
+
+    # WASD keys move the camera
     mx = 0
     my = 0
     if input.keyboard.down?(Gosu::KB_S) # down
@@ -38,14 +53,15 @@ module RunLevel
     end
     e.pos.x += mx * spd * input.time.dt
     e.pos.y += my * spd * input.time.dt
+    update_native_coords e, input
+  end
 
-    if input.keyboard.pressed?(Gosu::KB_EQUALS)
-      e.camera.zoom += 0.1
-    elsif input.keyboard.pressed?(Gosu::KB_MINUS)
-      e.camera.zoom -= 0.1
-    end
-    if input.keyboard.pressed?(Gosu::KB_0)
-      e.camera.zoom = 1
-    end
+  def update_native_coords(e, input)
+    e.camera.native_x = e.pos.x * e.camera.zoom
+    e.camera.native_y = e.pos.y * e.camera.zoom
+    e.camera.native_w = input.window.width
+    e.camera.native_h = input.window.height
+    e.camera.world_w = e.camera.native_w / e.camera.zoom
+    e.camera.world_h = e.camera.native_h / e.camera.zoom
   end
 end

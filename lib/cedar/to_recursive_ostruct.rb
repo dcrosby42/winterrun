@@ -9,8 +9,8 @@ end
 
 # (dcrosby 2020-12-26 - convenience:)
 
-def open_struct(h)
-  to_recursive_ostruct h
+def open_struct(h = nil)
+  to_recursive_ostruct(h || {})
 end
 
 OpenStruct.define_singleton_method(:deep) do |h| to_recursive_ostruct(h) end

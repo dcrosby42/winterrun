@@ -9,7 +9,7 @@ class Cedar::Game < Gosu::Window
     @reload_button = reload_button
 
     @input = Cedar::Input.new
-    @output = Cedar::Output.new
+    @output = Cedar::Output.new(self)
 
     @module = root_module
     reset_state

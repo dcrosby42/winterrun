@@ -69,4 +69,18 @@ describe "stuff in the RunLevel module" do
       expect(a1_called_with).to eq(e1.anim.t)
     end
   end
+
+  describe "#paralax_calc" do
+    it "works" do
+      puts "hi"
+      x = 0
+      w = 720
+      f = 1
+      tw = 1421
+      g = lambda do
+        RunLevel::paralax_calc(x, w, f, tw)
+      end
+      binding.pry
+    end
+  end
 end

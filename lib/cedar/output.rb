@@ -1,8 +1,9 @@
 module Cedar
   class Output
-    attr_reader :graphics
+    attr_reader :graphics, :window
 
-    def initialize
+    def initialize(window)
+      @window = window
       @graphics = Cedar::Draw::Group.new
     end
 
