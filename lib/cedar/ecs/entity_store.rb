@@ -14,10 +14,19 @@ module Cedar
       e
     end
 
-    # def destroy_entity(e)
-    #   @ents.delete e.eid
-    #   nil
-    # end
+    def is_entity_id?(eid)
+      Integer === eid && @ents.keys.include(eid)
+    end
+
+    def destroy_entity(e)
+      if Integer === e
+        e = @ents[e]
+      end
+      if e and e.respond_to?(:eid) && @ents.keys.include?(e.eid)
+        e.clear
+        @ents.delete e.eid
+      end
+    end
 
     def notify(event_type, *params)
       @cache.notify(event_type, *params)

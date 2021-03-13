@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Cedar::Entity do
+describe Cedar::EntityStore do
   module Comps
     extend Cedar::ComponentFactory
   end
@@ -36,6 +36,48 @@ describe Cedar::Entity do
       enum = estore.entities
       arr = enum.map do |e| e end
       expect(arr).to match_array(ents)
+    end
+  end
+
+  describe "#destroy_entities" do
+    before do
+      ents # realize
+    end
+
+    it "removes the entity from the store" do
+      expect(estore.entities.count).to eq 3
+
+      e = estore.entities.to_a[1]
+      expect(e).to receive(:clear)
+
+      estore.destroy_entity(e)
+
+      expect(estore.entities.count).to eq 2
+    end
+
+    it "can operate on an entity id" do
+      expect(estore.entities.count).to eq 3
+
+      e = estore.entities.to_a[1]
+      expect(e).to receive(:clear)
+
+      estore.destroy_entity(e.eid)
+
+      expect(estore.entities.count).to eq 2
+    end
+
+    it "ignores bad entity ids" do
+      estore.destroy_entity(55)
+      estore.destroy_entity(nil)
+      estore.destroy_entity("oops")
+    end
+
+    it "ignores entities that aren't currently in the store" do
+      e = estore.entities.to_a[1]
+      estore.destroy_entity(e)
+
+      expect(e).not_to receive(:clear)
+      estore.destroy_entity(e)
     end
   end
 

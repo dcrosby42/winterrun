@@ -37,6 +37,11 @@ module Cedar
       end
     end
 
+    # Remove ALL components
+    def clear
+      @comps.keys.each(&method(:remove))
+    end
+
     def has?(type)
       @comps.include?(type)
     end

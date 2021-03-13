@@ -44,8 +44,8 @@ module RunLevel
     # end
 
     estore.new_entity do |e|
-      e.add ProtoMolecule.new(name: "paralax", data: open_struct)
-      e.add DebugWatch.new(label: "girl", watches: { proto_molecule: [:data] })
+      e.add ProtoMolecule.new(name: "paralax", data: {})
+      e.add DebugWatch.new(label: "proto", watches: { proto_molecule: [:data] })
     end
   end
 

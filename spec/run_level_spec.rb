@@ -83,4 +83,12 @@ describe "stuff in the RunLevel module" do
       binding.pry
     end
   end
+
+  describe "ParalaxSystem" do
+    it "works" do
+      binding.pry
+      RunLevel::ParalaxSystem.(estore, input, res)
+      binding.pry
+    end
+  end
 end

@@ -134,4 +134,36 @@ describe Cedar::Entity do
       end
     end
   end
+
+  describe "#clear" do
+    it "removes all components from the entity" do
+      entity.add(Loc.new)
+      entity.add(Sprite.new)
+      expect(entity).to respond_to(:loc)
+      expect(entity).to respond_to(:sprite)
+
+      entity.clear
+
+      expect(entity).not_to respond_to(:loc)
+      expect(entity).not_to respond_to(:sprite)
+    end
+
+    it "notifies as each component is removed" do
+      entity.add(Loc.new)
+      entity.add(Sprite.new)
+
+      calls = []
+      entity._listener = lambda do |event_type, *params|
+        calls << [event_type, params]
+      end
+
+      entity.clear
+
+      expect(calls.length).to eq 2
+      expect(calls[0][0]).to eq :remove_comp
+      expect(calls[0][1][0].type).to eq :loc
+      expect(calls[1][0]).to eq :remove_comp
+      expect(calls[1][1][0].type).to eq :sprite
+    end
+  end
 end
