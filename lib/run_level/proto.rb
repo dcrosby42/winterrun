@@ -75,7 +75,8 @@ module RunLevel
           end
           if es.length > xs.length
             # This layer has extra entities we can drop
-            es[x.length..-1].each do |e|
+            es[xs.length..-1].each do |e|
+              puts "proto: destroy #{e}"
               estore.destroy_entity e
             end
           end

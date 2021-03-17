@@ -9,6 +9,9 @@ module Cedar
       @metaclass = class << self; self; end
     end
 
+    def to_s
+      "<Cedar::Entity eid=#{eid}>"
+    end
     def add(comp)
       if respond_to?(comp.type)
         raise(ComponentError, "Entity[#{@eid}] already contains a Component of type #{comp.type.inspect}")
