@@ -29,8 +29,8 @@ module RunLevel
   FollowTarget = Component.new(:follow_target, { name: nil })
   Follower = Component.new(:follower, { target_name: nil, off_x: 0, off_y: 0 })
 
-  _follower_search = CompSearch.new(Follower, Pos)
-  _follow_target_search = CompSearch.new(FollowTarget, Pos)
+  _follower_search = EntityFilter.new(Follower, Pos)
+  _follow_target_search = EntityFilter.new(FollowTarget, Pos)
   FollowerSystem = lambda do |estore, input, res|
     estore.search(_follower_search).each do |ef|
       want = ef.follower.target_name
@@ -78,8 +78,8 @@ module RunLevel
   end
 
   def draw(state, output, res)
-    @cam_search ||= CompSearch.new(Camera, Pos)
-    @sprite_search ||= CompSearch.new(Pos, Sprite)
+    @cam_search ||= EntityFilter.new(Camera, Pos)
+    @sprite_search ||= EntityFilter.new(Pos, Sprite)
 
     cam = state.estore.search(@cam_search).first
     if cam
@@ -140,7 +140,7 @@ module RunLevel
     end
   end
 
-  Debug_search = CompSearch.new(DebugWatch)
+  Debug_search = EntityFilter.new(DebugWatch)
 
   def get_debug_messages(state)
     Enumerator.new do |y|

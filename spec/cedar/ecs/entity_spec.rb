@@ -38,20 +38,20 @@ describe Cedar::Entity do
 
     describe "when _listener is set" do
       it "notifies of :add_comp" do
-        calls = []
-        entity._listener = lambda do |event_type, *params|
-          calls << [event_type, params]
+        events = []
+        entity._listener = lambda do |evt|
+          events << evt
         end
 
         c1 = Loc.new
         entity.add(c1)
-        expect(calls[0][0]).to eq(:add_comp)
-        expect(calls[0][1]).to eq([c1])
+        expect(events[0]).to be_a Cedar::ComponentAddedEvent
+        expect(events[0].component).to eq c1
 
         c2 = Sprite.new
         entity.add(c2)
-        expect(calls[1][0]).to eq(:add_comp)
-        expect(calls[1][1]).to eq([c2])
+        expect(events[1]).to be_a Cedar::ComponentAddedEvent
+        expect(events[1].component).to eq c2
       end
     end
   end
@@ -83,15 +83,15 @@ describe Cedar::Entity do
       end
 
       describe "when _listener is set" do
-        it "notifies of :add_comp" do
+        it "notifies of ComponentDeletedEvent" do
           calls = []
-          entity._listener = lambda do |event_type, *params|
-            calls << [event_type, params]
+          entity._listener = lambda do |evt|
+            calls << evt
           end
 
           entity.remove(:loc)
-          expect(calls[0][0]).to eq(:remove_comp)
-          expect(calls[0][1]).to eq([loc])
+          expect(calls[0]).to be_a Cedar::ComponentDeletedEvent
+          expect(calls[0].component).to eq loc
         end
       end
     end
@@ -113,15 +113,15 @@ describe Cedar::Entity do
       end
 
       describe "when _listener is set" do
-        it "notifies of :add_comp" do
+        it "emits ComponentDeletedEvent" do
           calls = []
-          entity._listener = lambda do |event_type, *params|
-            calls << [event_type, params]
+          entity._listener = lambda do |evt|
+            calls << evt
           end
 
           entity.remove(:loc)
-          expect(calls[0][0]).to eq(:remove_comp)
-          expect(calls[0][1]).to eq([loc])
+          expect(calls[0]).to be_a Cedar::ComponentDeletedEvent
+          expect(calls[0].component).to eq loc
         end
       end
     end
@@ -149,21 +149,23 @@ describe Cedar::Entity do
     end
 
     it "notifies as each component is removed" do
-      entity.add(Loc.new)
-      entity.add(Sprite.new)
+      loc = Loc.new
+      sprite = Sprite.new
+      entity.add(loc)
+      entity.add(sprite)
 
       calls = []
-      entity._listener = lambda do |event_type, *params|
-        calls << [event_type, params]
+      entity._listener = lambda do |evt|
+        calls << evt
       end
 
       entity.clear
 
       expect(calls.length).to eq 2
-      expect(calls[0][0]).to eq :remove_comp
-      expect(calls[0][1][0].type).to eq :loc
-      expect(calls[1][0]).to eq :remove_comp
-      expect(calls[1][1][0].type).to eq :sprite
+      expect(calls[0]).to be_a Cedar::ComponentDeletedEvent
+      expect(calls[0].component).to eq loc
+      expect(calls[1]).to be_a Cedar::ComponentDeletedEvent
+      expect(calls[1].component).to eq sprite
     end
   end
 end

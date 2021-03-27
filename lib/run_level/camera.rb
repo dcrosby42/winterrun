@@ -4,7 +4,7 @@ module RunLevel
 
   Camera = Component.new(:camera, { zoom: 1, follow: true, native_x: 0, native_y: 0, native_w: 0, native_h: 0, world_w: 0, world_h: 0 })
 
-  CamSearch = CompSearch.new(Camera, Pos)
+  CamSearch = EntityFilter.new(Camera, Pos)
 
   CameraManualControlSystem = lambda do |estore, input, res|
     e = estore.search(CamSearch).first || return

@@ -27,9 +27,9 @@ module RunLevel
   end
 
   ParalaxSystem = begin
-      cam_search = CompSearch.new(Camera)
-      proto_search = CompSearch.new(ProtoMolecule)
-      bg_search = CompSearch.new(BackgroundLayer)
+      cam_search = EntityFilter.new(Camera)
+      proto_search = EntityFilter.new(ProtoMolecule)
+      bg_search = EntityFilter.new(BackgroundLayer)
 
       lambda do |estore, input, res|
         cam = estore.search(cam_search).first || return

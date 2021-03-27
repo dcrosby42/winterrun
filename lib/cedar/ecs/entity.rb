@@ -1,7 +1,7 @@
 module Cedar
   class Entity
     attr_reader :eid
-    attr_accessor :_listener # ifc: #notify(event_type, *params). Usually this is EntityStore. Optional
+    attr_accessor :_listener # callable that accepts an event. optional.
 
     def initialize(eid)
       @eid = eid
@@ -12,6 +12,7 @@ module Cedar
     def to_s
       "<Cedar::Entity eid=#{eid}>"
     end
+
     def add(comp)
       if respond_to?(comp.type)
         raise(ComponentError, "Entity[#{@eid}] already contains a Component of type #{comp.type.inspect}")
@@ -19,7 +20,7 @@ module Cedar
       comp.eid = eid
       @metaclass.send :define_method, comp.type do comp end
       @comps[comp.type] = comp
-      _listener.call :add_comp, comp if _listener
+      notify ComponentAddedEvent.new(comp)
       self
     end
 
@@ -29,7 +30,7 @@ module Cedar
           send(comp).eid = nil
           @metaclass.send :remove_method, comp
           obj = @comps.delete comp
-          _listener.call :remove_comp, obj if _listener
+          notify ComponentDeletedEvent.new(obj)
         else
           raise(ComponentError, "Entity[#{@eid}] contains no Component of type #{comp.inspect}")
         end
@@ -58,7 +59,11 @@ module Cedar
     end
 
     def inspect
-      "<Entity-#{@eid}>" #{@compse.keys.sort.inspect}"
+      "<Entity-#{@eid}>"
+    end
+
+    def notify(evt)
+      _listener.call(evt) if _listener
     end
   end
 end

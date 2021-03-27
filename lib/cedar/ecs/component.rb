@@ -72,4 +72,9 @@ module Cedar
   class Component
     extend ComponentFactory
   end
+
+  ComponentEvent = Struct.new(:component)
+
+  class ComponentAddedEvent < ComponentEvent; end
+  class ComponentDeletedEvent < ComponentEvent; end
 end

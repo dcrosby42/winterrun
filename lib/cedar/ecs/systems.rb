@@ -48,7 +48,7 @@ module Cedar
 
   # VERY common system pattern: A basic update system based on a component-type search.
   def self.define_system(*types, &update)
-    search = CompSearch.new(types.flatten)
+    search = EntityFilter.new(types.flatten)
     BasicSystem.new(search, update)
   end
 end
