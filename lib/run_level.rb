@@ -5,7 +5,9 @@ end
 
 require "cedar/ecs"
 require "run_level/placeholder"
+require "run_level/debug_watch"
 require "run_level/camera"
+require "run_level/follower"
 require "run_level/background"
 require "run_level/girl"
 require "run_level/entities"
@@ -13,32 +15,9 @@ require "run_level/entities"
 module RunLevel
   extend self
 
-  DebugWatch = Component.new(:debug_watch, { label: "watch", watches: nil })
   MotionSystem = define_system(Vel, Pos) do |e, input, res|
     e.pos.x += e.vel.dx * input.time.dt
     e.pos.y += e.vel.dy * input.time.dt
-  end
-
-  AnimSystem = define_system(Anim, Sprite) do |e, input, res|
-    e.anim.t += (input.time.dt * e.anim.factor)
-    anim = res.anims[e.anim.id]
-    sprite_id, frame_id = anim.call(e.anim.t)
-    e.sprite.id = sprite_id
-    e.sprite.frame = frame_id
-  end
-
-  FollowTarget = Component.new(:follow_target, { name: nil })
-  Follower = Component.new(:follower, { target_name: nil, off_x: 0, off_y: 0 })
-
-  _follower_search = EntityFilter.new(Follower, Pos)
-  _follow_target_search = EntityFilter.new(FollowTarget, Pos)
-  FollowerSystem = lambda do |estore, input, res|
-    estore.search(_follower_search).each do |ef|
-      want = ef.follower.target_name
-      et = estore.search(_follow_target_search).find do |et| want == et.follow_target.name end
-      ef.pos.x = et.pos.x - ef.follower.off_x
-      ef.pos.y = et.pos.y - ef.follower.off_y
-    end
   end
 
   def new_state
@@ -73,7 +52,7 @@ module RunLevel
 
     # UpdateSystem.call(state.estore, input, res)
     [GirlSystem,
-     AnimSystem,
+     SpriteAnimSystem,
      MotionSystem,
      CameraManualControlSystem,
      ParalaxBackgroundSystem].each do |system|
@@ -150,8 +129,6 @@ module RunLevel
     end
   end
 
-  Debug_search = EntityFilter.new(DebugWatch)
-
   def get_debug_messages(state)
     Enumerator.new do |y|
       y << "Window size: #{state.window_w}, #{state.window_h}"
@@ -159,7 +136,7 @@ module RunLevel
       placeholder_entities(state.estore).each do |e|
         y << "#{e.placeholder.name}: #{dbg_fmt e.placeholder.data}"
       end
-      state.estore.search(Debug_search).each do |e|
+      state.estore.search(DebugWatch_filter).each do |e|
         label = e.debug_watch.label
         e.debug_watch.watches.each do |cname, thing|
           comp = e.send(cname)

@@ -54,3 +54,4 @@ module Cedar
 end
 
 require "cedar/ecs/systems/timer_system"
+require "cedar/ecs/systems/sprite_anim_system"
