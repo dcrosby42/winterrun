@@ -70,25 +70,25 @@ describe "stuff in the RunLevel module" do
     end
   end
 
-  describe "#paralax_calc" do
-    it "works" do
-      x = 0
-      w = 720
-      f = 1
-      tw = 1421
-      g = lambda do
-        RunLevel::paralax_calc(x, w, f, tw)
-      end
-      fail "FINISH HIM"
-    end
-  end
+  # describe "#paralax_calc" do
+  #   it "works" do
+  #     skip "finish him"
+  #     x = 0
+  #     w = 720
+  #     f = 1
+  #     tw = 1421
+  #     g = lambda do
+  #       RunLevel::paralax_calc(x, w, f, tw)
+  #     end
+  #   end
+  # end
 
-  describe "ParalaxSystem" do
-    it "works" do
-      fail "FIXME"
-      # binding.pry
-      RunLevel::ParalaxSystem.(estore, input, res)
-      # binding.pry
-    end
-  end
+  # describe "ParalaxSystem" do
+  #   it "works" do
+  #     skip "FIXME"
+  #     # binding.pry
+  #     RunLevel::ParalaxSystem.(estore, input, res)
+  #     # binding.pry
+  #   end
+  # end
 end

@@ -7,7 +7,7 @@ require "cedar/ecs"
 require "run_level/entities"
 require "run_level/girl"
 require "run_level/camera"
-require "run_level/proto"
+require "run_level/background"
 
 module RunLevel
   extend self
@@ -47,9 +47,12 @@ module RunLevel
     open_struct({
       estore: estore,
       grid_lines: {
-        show: true,
+        show: false,
         step_x: 100,
         step_y: 100,
+      },
+      debug_console: {
+        show: true,
       },
     })
   end
@@ -60,13 +63,19 @@ module RunLevel
     if input.keyboard.pressed?(Gosu::KB_P) and input.keyboard.shift?
       $P = true
     end
+    if input.keyboard.pressed?(Gosu::KB_BACKTICK)
+      state.debug_console.show = !state.debug_console.show
+    end
+    if input.keyboard.control? and input.keyboard.shift? and input.keyboard.pressed?(Gosu::KB_G)
+      state.grid_lines.show = !state.grid_lines.show
+    end
 
     # UpdateSystem.call(state.estore, input, res)
     [GirlSystem,
      AnimSystem,
      MotionSystem,
      CameraManualControlSystem,
-     ParalaxSystem].each do |system|
+     ParalaxBackgroundSystem].each do |system|
       system.call state.estore, input, res
     end
 
@@ -116,16 +125,18 @@ module RunLevel
     #
     # Debug text
     #
-    msgs = get_debug_messages(state).to_a
-    dbg_y = 0
-    lh = 20
-    z = 100
-    w = output.window.width
-    bgc = Gosu::Color.rgba(0, 0, 0, 80)
-    msgs.each do |msg|
-      output.graphics << Draw::Rect.new(x: 0, y: dbg_y, w: w, h: lh, z: z - 1, color: bgc)
-      output.graphics << Draw::Label.new(text: msg, y: dbg_y, z: z)
-      dbg_y += lh
+    if state.debug_console.show
+      msgs = get_debug_messages(state).to_a
+      dbg_y = 0
+      lh = 20
+      z = 100
+      w = output.window.width
+      bgc = Gosu::Color.rgba(0, 0, 0, 80)
+      msgs.each do |msg|
+        output.graphics << Draw::Rect.new(x: 0, y: dbg_y, w: w, h: lh, z: z - 1, color: bgc)
+        output.graphics << Draw::Label.new(text: msg, y: dbg_y, z: z)
+        dbg_y += lh
+      end
     end
   end
 

@@ -36,5 +36,11 @@ module Cedar
     def hash
       @hash
     end
+
+    def inspect
+      "#<EntityFilter #{@ident}>"
+    end
+
+    alias_method :to_s, :inspect
   end
 end

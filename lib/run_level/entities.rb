@@ -22,30 +22,9 @@ module RunLevel
       e.add DebugWatch.new(label: "girl", watches: { pos: [:x, :y] })
     end
 
-    # estore.new_entity do |e|
-    #   e.add Sprite.new(id: "bg_l0")
-    #   e.add Pos.new(x: 0, y: 0, z: 0)
-    #   e.add BackgroundLayer.new(layer: 0, paralax: 0.125)
-    # end
-    # estore.new_entity do |e|
-    #   e.add Sprite.new(id: "bg_l1")
-    #   e.add Pos.new(x: 0, y: 0, z: 1)
-    #   e.add BackgroundLayer.new(layer: 1, paralax: 0.25)
-    # end
-    # estore.new_entity do |e|
-    #   e.add Sprite.new(id: "bg_l2")
-    #   e.add Pos.new(x: 0, y: 0, z: 3)
-    #   e.add BackgroundLayer.new(layer: 2, paralax: 0.5)
-    # end
-    # estore.new_entity do |e|
-    #   e.add Sprite.new(id: "bg_l3")
-    #   e.add Pos.new(x: 0, y: 0, z: 4)
-    #   e.add BackgroundLayer.new(layer: 3, paralax: 1)
-    # end
-
     estore.new_entity do |e|
       e.add ProtoMolecule.new(name: "paralax", data: {})
-      e.add DebugWatch.new(label: "proto", watches: { proto_molecule: [:data] })
+      e.add DebugWatch.new(label: "proto", watches: { proto_molecule: [:name, :data] })
     end
   end
 

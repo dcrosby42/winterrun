@@ -9,7 +9,10 @@ module RunLevel
 
   GirlSystem = define_system(Girl) do |e, input, res|
     dir = e.girl.dir
-    factor = input.keyboard.shift? ? 1.5 : 1
+    factor = 1
+    if input.keyboard.shift? then factor = 1.5 end
+    if input.keyboard.alt? then factor = 3 end
+
     if input.keyboard.down?(Gosu::KB_LEFT)
       e.girl.dir = :left
       e.vel.dx = -GirlRunSpeed * factor
