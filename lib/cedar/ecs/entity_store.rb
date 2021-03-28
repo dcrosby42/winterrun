@@ -6,10 +6,14 @@ module Cedar
     end
 
     def new_entity
-      e = Entity.new(next_eid)
-      @ents[e.eid] = e
+      e = _create_entity
       yield e if block_given?
       e
+    end
+
+    def _create_entity
+      e = Entity.new(next_eid)
+      @ents[e.eid] = e
     end
 
     def destroy_entity(e)

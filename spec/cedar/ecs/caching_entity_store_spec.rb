@@ -9,7 +9,9 @@ describe Cedar::CachingEntityStore do
   Grape = TestComps.new(:grape, { size: 0, color: :green })
 
   class TestFilter < Cedar::EntityFilter
-    attr_accessor :call_count
+    def call_count
+      @call_count || 0
+    end
 
     def call(e)
       @call_count ||= 0
@@ -38,6 +40,20 @@ describe Cedar::CachingEntityStore do
       yielded = nil
       returned = estore.new_entity do |e| yielded = e end
       expect(returned).to equal(yielded)
+    end
+
+    describe "when block is passed, and components are added " do
+      it "properly attaches listener such that ComponentAddedEvents are properly emitted during adds in the block" do
+        filter = Cedar::EntityFilter.new(Pos)
+        hits = estore.search(filter) # causes the filter to be registered
+        expect(hits).to be_empty
+        e1 = estore.new_entity do |e|
+          e.add(Grape.new(size: 4, color: :red))
+          e.add(Pos.new(x: 10, y: 100))
+        end
+        hits = estore.search(filter) # causes the filter to be registered
+        expect(hits).to match_array([e1])
+      end
     end
   end
 

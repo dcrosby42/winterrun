@@ -41,7 +41,7 @@ module RunLevel
   end
 
   def new_state
-    estore = EntityStore.new
+    estore = CachingEntityStore.new
     initial_entities estore
 
     open_struct({
@@ -54,15 +54,13 @@ module RunLevel
     })
   end
 
-  # UpdateSystem = chain_systems(
-  #   GirlSystem,
-  #   AnimSystem,
-  #   MotionSystem,
-  #   CameraManualControlSystem,
-  #   # FollowerSystem
-  # )
+  $P = !!ENV["P"]
 
   def update(state, input, res)
+    if input.keyboard.pressed?(Gosu::KB_P) and input.keyboard.shift?
+      $P = true
+    end
+
     # UpdateSystem.call(state.estore, input, res)
     [GirlSystem,
      AnimSystem,

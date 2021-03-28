@@ -6,8 +6,9 @@ module Cedar
     end
 
     def new_entity
-      e = super
+      e = _create_entity
       e._listener = @cache.method(:handle_event)
+      yield e if block_given?
       e
     end
 
