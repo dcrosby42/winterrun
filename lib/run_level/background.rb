@@ -1,5 +1,4 @@
 module RunLevel
-  ProtoMolecule = Component.new(:proto_molecule, { name: "UNSET", data: nil })
   BackgroundLayer = Component.new(:background_layer, { layer: 0, xtile: 0 })
 
   BGW = 1421 # hardcoded bg image width.  Could proly get this from resources
@@ -29,12 +28,11 @@ module RunLevel
   ParalaxBackgroundSystem = begin
       cam_search = EntityFilter.new(Camera)
       bg_search = EntityFilter.new(BackgroundLayer)
-      dbg_search = EntityFilter.new(ProtoMolecule)
 
       lambda do |estore, input, res|
         cam = estore.search(cam_search).first || return
         bgs = estore.search(bg_search)
-        dbg_e = estore.search(dbg_search).first # deleteme debugging
+        # phe = estore.search(placeholder_search).find do |e| e.placeholder.name == "Background" end # deleteme debugging
 
         # Organize each BackgroundLayer entity, keyed by layer. Could be multiple ents per layer.
         by_layer = bgs.inject(Hash.new do |h, k| h[k] = [] end) do |m, e|
@@ -54,8 +52,9 @@ module RunLevel
           xs = paralax_calc(cam.pos.x, cam.camera.world_w, cfg[:paralax], cfg[:w])
 
           # deleteme: debugging
-          # dbg_e.debug_board.post(["bg",layer],xs]data[layer] = xs
-          dbg_e.proto_molecule.data[layer] = xs
+          with_placeholder(estore, "Background") do |h|
+            h.data[layer] = xs
+          end
 
           # Arrange bg ents based on the current x coords.
           # Modify or add or remove entities as needed
@@ -71,7 +70,6 @@ module RunLevel
                 e.add Sprite.new(id: cfg[:sprite_id])
                 e.add Pos.new(x: x, y: 0, z: layer)
                 e.add BackgroundLayer.new(layer: layer)
-                puts "proto: created #{e}"
               end
             end
           end
@@ -79,7 +77,6 @@ module RunLevel
             # This layer has extra entities we can drop
             es[xs.length..-1].each do |e|
               estore.destroy_entity e
-              puts "proto: destroyed #{e}"
             end
           end
         end # Scheme.each

@@ -4,10 +4,11 @@ module RunLevel
 end
 
 require "cedar/ecs"
-require "run_level/entities"
-require "run_level/girl"
+require "run_level/placeholder"
 require "run_level/camera"
 require "run_level/background"
+require "run_level/girl"
+require "run_level/entities"
 
 module RunLevel
   extend self
@@ -155,6 +156,9 @@ module RunLevel
     Enumerator.new do |y|
       y << "Window size: #{state.window_w}, #{state.window_h}"
 
+      placeholder_entities(state.estore).each do |e|
+        y << "#{e.placeholder.name}: #{dbg_fmt e.placeholder.data}"
+      end
       state.estore.search(Debug_search).each do |e|
         label = e.debug_watch.label
         e.debug_watch.watches.each do |cname, thing|

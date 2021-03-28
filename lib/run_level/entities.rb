@@ -23,8 +23,8 @@ module RunLevel
     end
 
     estore.new_entity do |e|
-      e.add ProtoMolecule.new(name: "paralax", data: {})
-      e.add DebugWatch.new(label: "proto", watches: { proto_molecule: [:name, :data] })
+      e.add Placeholder.new(name: "Background", data: {})
+      # e.add DebugWatch.new(label: "dbg", watches: { placeholder: [:name, :data] })
     end
   end
 
