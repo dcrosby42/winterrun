@@ -16,12 +16,12 @@ module RunLevel
   # factor: paralax factor.  1 means 1-1 with camera motion (no paralax), 0 means no motion (infinite paralax)
   # tile_w: width of one bg image tile.
   def paralax_calc(x, w, factor, tile_w)
-    left = (x * factor).to_i
-    right = (left + w).to_i
-    t0 = left / tile_w
-    tn = right / tile_w
+    left = (x * factor)
+    right = (left + w)
+    t0 = left.to_i / tile_w
+    tn = right.to_i / tile_w
     (t0..tn).map do |tx|
-      (x * (1 - factor)).to_i + (tx * tile_w)
+      (x * (1.0 - factor)) + (tx * tile_w)
     end
   end
 
