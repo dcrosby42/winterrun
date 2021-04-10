@@ -24,6 +24,8 @@ end
 module Cedar::Helpers; end
 
 require "gosu"
+require "active_support"
+require "active_support/core_ext"
 require "cedar/to_recursive_ostruct"
 require "cedar/shape"
 require "cedar/autoreload"

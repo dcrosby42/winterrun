@@ -39,6 +39,28 @@ For dev:
 
 ## Resources
 
+WIP
+
+TEST - Cedar::ResourceLoader
+TEST - Cedar::Resources
+  TODO: #load - option to be lazy or do immediate construction
+TEST - Cedar::Resources::GridSpriteSheet
+MOVE/REIMPL - Cedar::Resources::ImageSprite 
+TEST - Cedar::Resources::CyclicSpriteAnimation
+
+
+### Types
+
+file
+data
+image
+sprite
+animation
+? sound
+? music
+
+
+
 - `sprites`
   - `sprites.load(sprint_info|filename)` - filenames are supposed to be json files rooted under res/files/
 - `anims`
