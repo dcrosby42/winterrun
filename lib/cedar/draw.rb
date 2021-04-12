@@ -26,11 +26,13 @@ module Cedar
 
     SheetSprite = Struct.new(:sprite_id, :sprite_frame, :x, :y, :z, :angle, :center_x, :center_y, :scale_x, :scale_y, keyword_init: true) do
       def draw(res)
-        sprite = res.sprites[sprite_id || raise(":sprite_id required")] || raise("No Sprite with sprite_id: #{sprite_id.inspect}")
+        sprite = res.get_sprite(sprite_id || raise(":sprite_id required"))
         self.center_x ||= sprite.center_x || 0
         self.center_y ||= sprite.center_y || 0
+        self.scale_x ||= sprite.scale_x || 1
+        self.scale_y ||= sprite.scale_y || 1
         img = sprite.image_for_frame(sprite_frame || 0)
-        img.draw_rot(x, y, z || 0, angle || 0, center_x, center_y, scale_x || 1, scale_y || 1)
+        img.draw_rot(x, y, z || 0, angle || 0, center_x, center_y, scale_x, scale_y)
       end
     end
 

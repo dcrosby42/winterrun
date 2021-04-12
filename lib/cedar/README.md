@@ -39,12 +39,13 @@ For dev:
 
 ## Resources
 
-WIP
 
-TEST - Cedar::ResourceLoader
-TEST - Cedar::Resources
+Cedar::ResourceLoader
+Cedar::Resources
   TODO: #load - option to be lazy or do immediate construction
-TEST - Cedar::Resources::GridSpriteSheet
+
+WIP
+TEST - Cedar::Resources::GridSheetSprite
 MOVE/REIMPL - Cedar::Resources::ImageSprite 
 TEST - Cedar::Resources::CyclicSpriteAnimation
 
@@ -56,6 +57,7 @@ data
 image
 sprite
 animation
+? font
 ? sound
 ? music
 

@@ -1,0 +1,21 @@
+[
+  {
+    "type": "fake_sprite",
+    "name": "fromfile1"
+  },
+  [
+    {
+      "type": "fake_sprite",
+      "name": "fromfile2"
+    },
+    {
+      "type": "fake_sprite2",
+      "name": "fromfile3"
+    }
+  ],
+  [
+    [
+      "fake_anims.yaml"
+    ]
+  ]
+]

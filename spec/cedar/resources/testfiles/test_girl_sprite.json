@@ -1,8 +1,8 @@
 [
     {
-        "name": "girl_run",
         "type": "grid_sheet_sprite",
-        "path": "girl_sprite_sheet.png",
+        "name": "girl_run",
+        "image": "girl_day.png",
         "tile_grid": {
             "x": 0,
             "y": 36,
@@ -13,9 +13,9 @@
         }
     },
     {
-        "name": "girl_stand",
         "type": "grid_sheet_sprite",
-        "path": "girl_sprite_sheet.png",
+        "name": "girl_stand",
+        "image": "girl_day.png",
         "tile_grid": {
             "x": 0,
             "y": 72,
@@ -26,9 +26,9 @@
         }
     },
     {
-        "name": "girl_jump",
         "type": "grid_sheet_sprite",
-        "path": "girl_sprite_sheet.png",
+        "name": "girl_jump",
+        "image": "girl_day.png",
         "tile_grid": {
             "x": 0,
             "y": 180,
@@ -39,9 +39,9 @@
         }
     },
     {
-        "name": "girl_biff",
         "type": "grid_sheet_sprite",
-        "path": "girl_sprite_sheet.png",
+        "name": "girl_biff",
+        "image": "girl_day.png",
         "tile_grid": {
             "x": 144,
             "y": 36,

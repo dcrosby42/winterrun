@@ -34,7 +34,7 @@ describe "Cedar::Resources" do
     end
   end
 
-  describe "registered resource types" do
+  describe "(with some registered fake-ish resource types)" do
     before do
       resources.register_object_type(FakeSprite)
       resources.register_object_type(FakeSprite2)
@@ -90,8 +90,8 @@ describe "Cedar::Resources" do
     end
 
     it "raises when asking for unconfigured resources" do
-      expect(lambda do resources.get_animation("animfromfile3") end).to raise_error(/Can't find.*constructor.*animation.*animfromfile3/)
-      expect(lambda do resources.get_sprite("bork") end).to raise_error(/Can't find.*constructor.*sprite.*bork/)
+      expect(lambda do resources.get_animation("animfromfile3") end).to raise_error(/Can't find animation constructor.*animfromfile3/)
+      expect(lambda do resources.get_sprite("bork") end).to raise_error(/Can't find sprite constructor.*bork/)
     end
   end
 
@@ -113,6 +113,60 @@ describe "Cedar::Resources" do
     def self.category; :animation; end
     def self.construct(config:, resources:)
       open_struct(fake_anim: true, config: config, resources: resources)
+    end
+  end
+
+  describe "(with some genuine registered resource types)" do
+    before do
+      resources.register_object_type(Cedar::Resources::ImageSprite)
+      resources.register_object_type(Cedar::Resources::GridSheetSprite)
+      resources.register_object_type(Cedar::Resources::CyclicSpriteAnimation)
+
+      resources.configure([
+        "test_girl_sprite.json",
+        "test_snowy_background.json",
+        {
+          type: "cyclic_sprite_animation",
+          name: "girl_run",
+          sprite: "girl_run",
+          fps: 24,
+        },
+        {
+          type: :image_sprite,
+          name: "dwarves",
+          images: ["gilius.png", "gilius_cg.png"],
+        },
+      ])
+    end
+
+    it "can load ImageSprite objects" do
+      %w|bg_l0 bg_l1|.each do |name|
+        spr = resources.get_sprite(name)
+        expect(spr).not_to be_nil
+        expect(spr).to be_instance_of(Cedar::Resources::ImageSprite)
+      end
+    end
+
+    it "can load a multi-image ImageSprite" do
+      gilius = resources.get_sprite("dwarves")
+      expect(gilius).not_to be_nil
+      i1 = gilius.image_for_frame(0)
+      i2 = gilius.image_for_frame(1)
+      expect(i1.width).not_to eq i2.width
+    end
+
+    it "can load GridSheetSprite objects" do
+      %w|girl_run girl_stand girl_jump girl_biff|.each do |name|
+        spr = resources.get_sprite(name)
+        expect(spr).not_to be_nil
+        expect(spr).to be_instance_of(Cedar::Resources::GridSheetSprite)
+      end
+    end
+
+    it "can load CyclicAnimation objects" do
+      anim = resources.get_animation("girl_run")
+      expect(anim).not_to be_nil
+      expect(anim).to be_instance_of(Cedar::Resources::CyclicSpriteAnimation)
     end
   end
 end

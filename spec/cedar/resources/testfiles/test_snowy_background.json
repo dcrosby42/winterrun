@@ -1,0 +1,12 @@
+[
+    {
+        "type": "image_sprite",
+        "image": "bg_l0.png",
+        "name": "bg_l0"
+    },
+    {
+        "type": "image_sprite",
+        "image": "bg_l1.png",
+        "name": "bg_l1"
+    }
+]

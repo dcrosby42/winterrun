@@ -1,0 +1,5 @@
+---
+- type: fake_anim
+  name: animfromfile1
+- type: fake_anim
+  name: animfromfile2

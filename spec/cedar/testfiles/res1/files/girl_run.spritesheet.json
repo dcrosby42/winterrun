@@ -1,6 +1,6 @@
 
 {
-    "type": "grid_sprite_sheet",
+    "type": "grid_sheet_sprite",
     "name": "girl_run",
     "path": "girl_sprite_sheet.png",
     "tile_grid": {
