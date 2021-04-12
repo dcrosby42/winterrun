@@ -9,11 +9,11 @@ describe Cedar::Component do
     extend Cedar::ComponentFactory
   end
 
-  Grape = TestComps.new(:grape, { size: 0, color: :green })
+  Grape2 = TestComps.new(:grape, { size: 0, color: :green })
 
   describe ".new" do
     it "defines a new type of component" do
-      g = Grape.new(eid: 42, size: 5, color: :red)
+      g = Grape2.new(eid: 42, size: 5, color: :red)
       expect(g).not_to be_nil
       expect(g.eid).to equal 42
       expect(g.size).to equal 5
@@ -22,33 +22,33 @@ describe Cedar::Component do
 
     describe "creates a new Component class that" do
       it "has a .type class method" do
-        expect(Grape.type).to equal :grape
+        expect(Grape2.type).to equal :grape
       end
 
       it "has a .props class method that returns the properties and defailts" do
-        expect(Grape.props).to eq({ size: 0, color: :green, eid: nil })
+        expect(Grape2.props).to eq({ size: 0, color: :green, eid: nil })
       end
 
       it "has a #type instance method and .type class method" do
-        expect(Grape.new.type).to equal :grape
+        expect(Grape2.new.type).to equal :grape
       end
 
       it "has defaults" do
-        g = Grape.new
+        g = Grape2.new
         expect(g.eid).to be_nil
         expect(g.size).to equal 0
         expect(g.color).to equal :green
       end
 
       it "partially applies defaults" do
-        g = Grape.new(eid: 12, color: :red)
+        g = Grape2.new(eid: 12, color: :red)
         expect(g.eid).to equal 12
         expect(g.size).to equal 0
         expect(g.color).to equal :red
       end
 
       it "provides read/write attrs" do
-        g = Grape.new
+        g = Grape2.new
         g.eid = 50
         g.size = 100
         g.color = :gold
@@ -58,11 +58,11 @@ describe Cedar::Component do
       end
 
       it "raises on unexpected constructor args" do
-        expect { Grape.new(pits: "pointy") }.to raise_error(/:pits/)
+        expect { Grape2.new(pits: "pointy") }.to raise_error(/:pits/)
       end
 
       it "can convert to a Hash" do
-        g = Grape.new(eid: 42, size: 5, color: :red)
+        g = Grape2.new(eid: 42, size: 5, color: :red)
         expect(g.to_h).to eq({ type: :grape, eid: 42, size: 5, color: :red })
       end
     end
