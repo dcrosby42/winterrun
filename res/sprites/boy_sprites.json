@@ -1,8 +1,8 @@
 [
     {
-        "type": "grid_sprite_sheet",
+        "type": "grid_sheet_sprite",
         "name": "boy_run",
-        "path": "infinite_runner_pack/boy_day.png",
+        "image": "sprites/boy_sprites.png",
         "tile_grid": {
             "x": 0,
             "y": 36,
@@ -13,9 +13,15 @@
         }
     },
     {
-        "type": "grid_sprite_sheet",
+        "type": "cyclic_sprite_animation",
+        "name": "boy_run",
+        "sprite": "boy_run",
+        "fps": 24
+    },
+    {
+        "type": "grid_sheet_sprite",
         "name": "boy_jump",
-        "path": "infinite_runner_pack/boy_day.png",
+        "image": "sprites/boy_sprites.png",
         "tile_grid": {
             "x": 0,
             "y": 180,
@@ -26,9 +32,15 @@
         }
     },
     {
-        "type": "grid_sprite_sheet",
+        "type": "cyclic_sprite_animation",
+        "name": "boy_stand",
+        "sprite": "boy_stand",
+        "fps": 24
+    },
+    {
+        "type": "grid_sheet_sprite",
         "name": "boy_biff",
-        "path": "infinite_runner_pack/boy_day.png",
+        "image": "images/infinite_runner_pack/boy_day.png",
         "tile_grid": {
             "x": 144,
             "y": 36,

@@ -1,0 +1,22 @@
+[
+    {
+        "type": "image_sprite",
+        "image": "sprites/snowy_forest/Backgrounds/background layer0.png",
+        "name": "bg_l0"
+    },
+    {
+        "type": "image_sprite",
+        "image": "sprites/snowy_forest/Backgrounds/background layer1.png",
+        "name": "bg_l1"
+    },
+    {
+        "type": "image_sprite",
+        "image": "sprites/snowy_forest/Backgrounds/background layer2.png",
+        "name": "bg_l2"
+    },
+    {
+        "type": "image_sprite",
+        "image": "sprites/snowy_forest/Backgrounds/background layer3.png",
+        "name": "bg_l3"
+    }
+]
