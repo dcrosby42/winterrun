@@ -51,6 +51,12 @@
         }
     },
     {
+        "name": "girl_jump",
+        "type": "cyclic_sprite_animation",
+        "sprite": "girl_jump",
+        "fps": 24
+    },
+    {
         "type": "grid_sheet_sprite",
         "name": "girl_biff",
         "image": "sprites/girl_sprites.png",
@@ -62,5 +68,11 @@
             "count": 9,
             "stride": 3
         }
+    },
+    {
+        "name": "girl_biff",
+        "type": "cyclic_sprite_animation",
+        "sprite": "girl_biff",
+        "fps": 24
     }
 ]

@@ -33,7 +33,7 @@ class PlayerCharacter
       @anim_t += input.time.dt
     end
 
-    sprite = res.sprites[@sprite_id]
+    sprite = res.get_sprite(@sprite_id)
     @frame = (@anim_t / (1.0 / @fps)).floor % sprite.frame_count
   end
 
@@ -59,8 +59,11 @@ module PlayTester
   end
 
   def load_resources(state, res)
-    puts "PlayTester.load_resources"
-    res.sprites.load("girl_sprite.json")
+    res.configure list_resources
+  end
+
+  def list_resources
+    ["sprites/girl_sprites.json"]
   end
 
   def update(state, input, res)

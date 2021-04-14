@@ -5,7 +5,6 @@ module RunLevel
   Girl = Component.new(:girl, { dir: :right, player: nil })
 
   GirlRunSpeed = 100
-  GirlFps = 24
 
   GirlSystem = define_system(Girl) do |e, input, res|
     dir = e.girl.dir

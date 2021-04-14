@@ -22,7 +22,16 @@ class Cedar::Game < Gosu::Window
   end
 
   def new_resources
-    Cedar::Resources.new
+    resource_loader = Cedar::Resources::ResourceLoader.new(dir: "res")
+    res = Cedar::Resources.new(resource_loader: resource_loader)
+    [
+      Cedar::Resources::ImageSprite,
+      Cedar::Resources::GridSheetSprite,
+      Cedar::Resources::CyclicSpriteAnimation,
+    ].each do |c|
+      res.register_object_type c
+    end
+    res
   end
 
   def start!

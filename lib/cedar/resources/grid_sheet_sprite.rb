@@ -1,4 +1,6 @@
 class Cedar::Resources::GridSheetSprite < Cedar::Resources::BaseSprite
+  attr_reader :image, :image_path, :tile_grid # for dev and debug of spritesheets
+
   def initialize(name:, image:, tile_grid:, scale_x: nil, scale_y: nil, center_x: nil, center_y: nil)
     super name: name, scale_x: scale_x, scale_y: scale_y, center_x: center_x, center_y: center_y
     @image = image

@@ -68,6 +68,12 @@ module Cedar
       get_resource :animation, name
     end
 
+    def get_font(name)
+      raise("get_font needs to be implemented")
+      # TODO: fonts
+      # ...= Gosu::Font.new(20)
+    end
+
     def get_resource(category, name)
       @caches[category][name] ||= get_constructor(category, name).call
     end

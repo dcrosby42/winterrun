@@ -36,9 +36,15 @@ module Cedar
       end
     end
 
+    DefaultLabelFont = Gosu::Font.new(20)
+
     Label = Struct.new(:text, :font, :x, :y, :z, :scale_x, :scale_y, :color, keyword_init: true) do
       def draw(res)
-        res.fonts[font || :default].draw_text(text, x || 0, y || 0, z || 0, scale_x || 1, scale_y || 1, color || Gosu::Color::WHITE)
+        # FIXME! FONTS
+        # @fonts[:default] = Gosu::Font.new(20)
+        # f = res.fonts[font || :default]
+        f = DefaultLabelFont
+        f.draw_text(text, x || 0, y || 0, z || 0, scale_x || 1, scale_y || 1, color || Gosu::Color::WHITE)
       end
     end
 

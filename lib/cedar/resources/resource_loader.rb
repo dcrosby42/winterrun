@@ -7,11 +7,15 @@ class Cedar::Resources::ResourceLoader
   end
 
   def load_image(name, tileable: true, retro: true)
-    Gosu::Image.new(get_path(name), tileable: tileable, retro: retro)
+    Gosu::Image.new(get_file_path(name), tileable: tileable, retro: retro)
+  rescue
+    raise "Cannot load_image #{name.inspect}"
   end
 
   def load_file(name)
-    File.read(get_path(name))
+    File.read(get_file_path(name))
+  rescue
+    raise "Cannot load_file #{name.inspect}"
   end
 
   def load_data(name)
@@ -24,11 +28,14 @@ class Cedar::Resources::ResourceLoader
     else
       text
     end
+  rescue
+    raise "Cannot load_data #{name.inspect}"
   end
 
-  def get_path(file)
+  def get_file_path(file)
     name = "#{@resource_dir}/#{file}"
-    raise "Resource file doesn't exist: #{name.inspect}" if !File.exists?(name)
+    raise "Resource file doesn't exist: #{name.inspect}" unless File.exists?(name)
+    raise "Resource file is actually a dir: #{name.inspect}" if File.directory?(name)
     name
   end
 end

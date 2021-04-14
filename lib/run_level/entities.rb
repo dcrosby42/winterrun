@@ -29,36 +29,13 @@ module RunLevel
   end
 
   def load_resources(state, res)
-    res.sprites.load("girl_sprite.json")
-    res.anims["girl_run"] = lambda do |t|
-      ct = res.sprites["girl_run"].tile_grid.count
-      frame = (t * GirlFps).to_i % ct
-      ["girl_run", frame]
-    end
-    res.anims["girl_stand"] = lambda do |t|
-      ct = res.sprites["girl_stand"].tile_grid.count
-      frame = (t * GirlFps).to_i % ct
-      ["girl_stand", frame]
-    end
-    res.sprites.load({
-      name: "bg_l0",
-      type: "image_sprite",
-      paths: ["snowy_forest/Backgrounds/background layer0.png"],
-    })
-    res.sprites.load({
-      name: "bg_l1",
-      type: "image_sprite",
-      paths: ["snowy_forest/Backgrounds/background layer1.png"],
-    })
-    res.sprites.load({
-      name: "bg_l2",
-      type: "image_sprite",
-      paths: ["snowy_forest/Backgrounds/background layer2.png"],
-    })
-    res.sprites.load({
-      name: "bg_l3",
-      type: "image_sprite",
-      paths: ["snowy_forest/Backgrounds/background layer3.png"],
-    })
+    res.configure list_resources
+  end
+
+  def list_resources
+    [
+      "sprites/girl_sprites.json",
+      "sprites/snowy_background.json",
+    ]
   end
 end

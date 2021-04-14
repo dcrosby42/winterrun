@@ -1,4 +1,6 @@
 class Cedar::Resources::BaseSprite
+  attr_reader :name, :scale_x, :scale_y, :center_x, :center_y
+
   def initialize(name:, scale_x: nil, scale_y: nil, center_x: nil, center_y: nil)
     @name = name
     @scale_x = scale_x || 1.0

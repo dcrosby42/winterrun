@@ -41,24 +41,41 @@ module SpritesheetTester
   end
 
   def load_resources(state, res)
-    res.sprites.load("girl_sprite.json")
-    res.sprites.load("boy_sprite.json")
+    res.configure list_resources
+  end
+
+  def list_resources
+    [
+      "sprites/girl_sprites.json",
+      "sprites/boy_sprites.json",
+    ]
   end
 
   def update(state, input, res)
-    state.sheets ||= res.sprites.all.select do |s| s.instance_of?(Cedar::Resources::GridSpriteSheet) end
+    state.sheets ||= [
+      "girl_stand",
+      "girl_run",
+      "girl_jump",
+      "girl_biff",
+      "boy_stand",
+      "boy_run",
+      "boy_jump",
+      "boy_biff",
+    ].map do |name| res.get_sprite(name) end
+
+    # +/- keys adjust zoom:
     state.scale = 1 if input.keyboard.pressed?(Gosu::KB_0)
     state.scale += 0.1 if input.keyboard.pressed?(Gosu::KB_EQUALS)
     state.scale -= 0.1 if input.keyboard.pressed?(Gosu::KB_MINUS)
 
-    # Cycle sheet selection
+    # [,] keys cycle sheet selection
     if input.keyboard.pressed?(Gosu::KB_RIGHT_BRACKET)
       state.selected_sheet = (state.selected_sheet + 1) % state.sheets.length
     elsif input.keyboard.pressed?(Gosu::KB_LEFT_BRACKET)
       state.selected_sheet = (state.selected_sheet - 1) % state.sheets.length
     end
 
-    # Change anim speed
+    # up,down arrow keys change anim speed
     if input.keyboard.pressed?(Gosu::KB_UP)
       amt = 1
       amt = 5 if input.keyboard.shift?
@@ -71,6 +88,7 @@ module SpritesheetTester
       state.frame_timer.limit = 1.0 / state.frame_rate
     end
 
+    # Space key plays/pauses
     if input.keyboard.pressed?(Gosu::KB_SPACE)
       state.playing = !state.playing
     end
@@ -106,7 +124,8 @@ module SpritesheetTester
 
     draw_sheet_grid(0, 72, sheet, frame, gs, res)
     gs << Cedar::Draw::Image.new(
-      path: sheet.path,
+      # path: sheet.path,
+      image: sheet.image,
       x: 0,
       y: 72,
       z: ZOrder.SHEET,
@@ -115,7 +134,7 @@ module SpritesheetTester
     output.graphics << gs
 
     text_y = 0
-    label1 = Cedar::Draw::Label.new(text: "Sheet #{state.selected_sheet}: name: #{sheet.name} path: #{sheet.path} w=#{res.images[sheet.path].width} h=#{res.images[sheet.path].height}", y: text_y, z: ZOrder.UI)
+    label1 = Cedar::Draw::Label.new(text: "Sheet #{state.selected_sheet}: name: #{sheet.name} path: #{sheet.image_path}", y: text_y, z: ZOrder.UI)
 
     output.graphics << label1
     text_y += 20
