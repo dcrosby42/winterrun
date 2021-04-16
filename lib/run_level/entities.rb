@@ -19,7 +19,7 @@ module RunLevel
       e.add Pos.new(x: 0, y: 480, z: 10)
       e.add Vel.new
       e.add FollowTarget.new(name: "girl")
-      e.add DebugWatch.new(label: "girl", watches: { pos: [:x, :y] })
+      e.add DebugWatch.new(label: "girl", watches: { pos: [:x, :y], vel: [:dx, :dy] })
     end
 
     estore.new_entity do |e|
