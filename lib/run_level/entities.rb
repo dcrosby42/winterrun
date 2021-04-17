@@ -12,15 +12,7 @@ module RunLevel
       e.add DebugWatch.new(label: "cam", watches: watches)
     end
 
-    estore.new_entity do |e|
-      e.add Girl.new(dir: :right, player: 1)
-      e.add Sprite.new(id: "girl_stand", scale_x: 1, scale_y: 1, center_x: 0.5, center_y: 0.8)
-      e.add Anim.new(id: "girl_stand", factor: 1)
-      e.add Pos.new(x: 0, y: 480, z: 10)
-      e.add Vel.new
-      e.add FollowTarget.new(name: "girl")
-      e.add DebugWatch.new(label: "girl", watches: { pos: [:x, :y], vel: [:dx, :dy] })
-    end
+    new_girl_entity estore
 
     estore.new_entity do |e|
       e.add Placeholder.new(name: "Background", data: {})

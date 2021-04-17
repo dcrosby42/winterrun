@@ -15,11 +15,6 @@ require "run_level/entities"
 module RunLevel
   extend self
 
-  MotionSystem = define_system(Vel, Pos) do |e, input, res|
-    e.pos.x += e.vel.dx * input.time.dt
-    e.pos.y += e.vel.dy * input.time.dt
-  end
-
   def new_state
     estore = CachingEntityStore.new
     initial_entities estore
@@ -52,8 +47,8 @@ module RunLevel
 
     # UpdateSystem.call(state.estore, input, res)
     [GirlSystem,
-     SpriteAnimSystem,
      MotionSystem,
+     SpriteAnimSystem,
      CameraManualControlSystem,
      ParalaxBackgroundSystem].each do |system|
       system.call state.estore, input, res
@@ -131,6 +126,7 @@ module RunLevel
 
   def get_debug_messages(state)
     Enumerator.new do |y|
+      y << "FPS: #{Gosu.fps}"
       y << "Window size: #{state.window_w}, #{state.window_h}"
 
       placeholder_entities(state.estore).each do |e|
