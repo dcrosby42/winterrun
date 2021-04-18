@@ -4,14 +4,30 @@ module RunLevel
 
   Camera = Component.new(:camera, { zoom: 1, follow: true, native_x: 0, native_y: 0, native_w: 0, native_h: 0, world_w: 0, world_h: 0 })
 
-  CamSearch = EntityFilter.new(Camera, Pos)
+  def new_camera_entity(estore)
+    estore.new_entity do |e|
+      e.add Camera.new(zoom: 2, follow: true)
+      e.add Pos.new(x: 0, y: 240)
+      e.add Follower.new(target_name: "girl", off_x: 200, off_y: 360, min_y: 120)
+      watches = {
+        pos: [:x, :y],
+        camera: [:zoom, :follow, :native_x, :native_y, :native_w, :native_h, :world_w, :world_h],
+        follower: [:off_x, :off_y],
+      }
+      e.add DebugWatch.new(label: "cam", watches: watches)
+    end
+  end
 
-  CameraManualControlSystem = lambda do |estore, input, res|
+  # CameraSystem = define_system(Camera, Pos) do |e, input, res|
+  CamSearch = EntityFilter.new(Camera, Pos)
+  CameraSystem = lambda do |estore, input, res|
     e = estore.search(CamSearch).first || return
 
     # Keyboard input: Shift-F toggles "follow" behavior
     if input.keyboard.pressed?(Gosu::KB_F) && input.keyboard.shift?
-      e.camera.follow = !e.camera.follow
+      if e.has?(:follower)
+        e.follower.on = !e.follower.on
+      end
     end
 
     # Keyboard zoom control: 0, -, +
@@ -24,38 +40,39 @@ module RunLevel
       e.camera.zoom = 1
     end
 
-    if e.camera.follow
+    if e.has?(:follower) and e.follower.on
       # Adjust following height based on zoom level, to keep our target from disappearing off the bottom:
       e.follower.off_y = [input.window.height / e.camera.zoom, 360].min
+      e.follower.min_y = 480 - e.follower.off_y
+
       # This will update camera pos values based on target entity:
       FollowerSystem.call(estore, input, res)
-
-      update_native_coords e, input
-      return # in follow mode, don't process camera movement controls
+    else
+      # WASD keys move the camera
+      mx = 0
+      my = 0
+      if input.keyboard.down?(Gosu::KB_S) # down
+        my = 1
+      elsif input.keyboard.down?(Gosu::KB_W) # up
+        my = -1
+      end
+      if input.keyboard.down?(Gosu::KB_A) # left
+        mx = -1
+      elsif input.keyboard.down?(Gosu::KB_D) # right
+        mx = 1
+      end
+      spd = 100
+      if input.keyboard.shift?
+        spd *= 2
+      end
+      e.pos.x += mx * spd * input.time.dt
+      e.pos.y += my * spd * input.time.dt
     end
 
-    # WASD keys move the camera
-    mx = 0
-    my = 0
-    if input.keyboard.down?(Gosu::KB_S) # down
-      my = 1
-    elsif input.keyboard.down?(Gosu::KB_W) # up
-      my = -1
-    end
-    if input.keyboard.down?(Gosu::KB_A) # left
-      mx = -1
-    elsif input.keyboard.down?(Gosu::KB_D) # right
-      mx = 1
-    end
-    spd = 100
-    if input.keyboard.shift?
-      spd *= 2
-    end
-    e.pos.x += mx * spd * input.time.dt
-    e.pos.y += my * spd * input.time.dt
-    update_native_coords e, input
+    update_native_coords e, input # remove once initial dev is done?
   end
 
+  # um. I think this was just for debugs...
   def update_native_coords(e, input)
     e.camera.native_x = e.pos.x * e.camera.zoom
     e.camera.native_y = e.pos.y * e.camera.zoom

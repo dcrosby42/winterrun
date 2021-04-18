@@ -7,11 +7,14 @@ module RunLevel
     dir: :right,
     touching_down: false,
   })
+
   Moveable = Component.new(:moveable, {
     touching_down: false,
   })
 
   GirlRunSpeed = 100
+  JumpSpeed = 90
+  Gravity = 4.5
 
   def self.new_girl_entity(estore)
     estore.new_entity do |e|
@@ -22,7 +25,11 @@ module RunLevel
       e.add Pos.new(x: 0, y: 400, z: 10)
       e.add Vel.new
       e.add FollowTarget.new(name: "girl")
-      e.add DebugWatch.new(label: "girl", watches: { pos: [:x, :y], vel: [:dx, :dy] })
+      e.add DebugWatch.new(label: "girl", watches: {
+                             pos: [:x, :y],
+                             vel: [:dx, :dy],
+                             moveable: [:touching_down],
+                           })
     end
   end
 
@@ -39,7 +46,8 @@ module RunLevel
 
     dir = e.girl.dir
 
-    if e.girl.touching_down
+    if e.moveable.touching_down
+      e.vel.dy = 0
       if input.keyboard.down?(Gosu::KB_LEFT)
         e.girl.dir = :left
         e.vel.dx = -GirlRunSpeed * speed_factor
@@ -48,26 +56,28 @@ module RunLevel
         e.girl.dir = :right
         e.vel.dx = GirlRunSpeed * speed_factor
         e.sprite.scale_x = e.sprite.scale_x.abs
-      elsif input.keyboard.pressed?(Gosu::KB_SPACE)
-        e.vel.dy -= 90
       else
-        e.vel.dy = 0
         e.vel.dx = 0
       end
+      anim_id = e.vel.dx == 0 ? "girl_stand" : "girl_run"
+      if input.keyboard.pressed?(Gosu::KB_SPACE)
+        e.vel.dy -= JumpSpeed
+        anim_id = "girl_jump"
+      end
     else
-      e.vel.dy += 4.5
+      # in the air
+      e.vel.dy += Gravity
+      anim_id = "girl_jump"
     end
+    anim_id ||= "girl_stand"
 
     # SELECT ANIMATION
 
-    anim_id = e.vel.dx == 0 ? "girl_stand" : "girl_run"
     if e.anim.id != anim_id or e.girl.dir != dir
       e.anim.id = anim_id
       e.anim.t = 0
     end
     e.anim.factor = speed_factor
-
-    # MOTION
   end
 
   MapLeftmost = 0
@@ -86,7 +96,10 @@ module RunLevel
     dx = e.vel.dx * input.time.dt
     dy = e.vel.dy * input.time.dt
 
-    e.pos.x = clamp(e.pos.x + dx, MapLeftmost, MapRightmost)
+    # e.pos.x = clamp(e.pos.x + dx, MapLeftmost, MapRightmost)
+    e.pos.x += dx
     e.pos.y = clamp(e.pos.y + dy, MapTop, MapBottom)
+
+    e.moveable.touching_down = e.pos.y >= MapBottom
   end
 end

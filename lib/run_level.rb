@@ -49,7 +49,7 @@ module RunLevel
     [GirlSystem,
      MotionSystem,
      SpriteAnimSystem,
-     CameraManualControlSystem,
+     CameraSystem,
      ParalaxBackgroundSystem].each do |system|
       system.call state.estore, input, res
     end
