@@ -2,6 +2,7 @@ require "modules/play_tester"
 require "run_level"
 # require "modules/bg_tester"
 require "modules/spritesheet_tester"
+require "modules/tree_tester"
 
 module Switcher
   extend self
@@ -9,10 +10,10 @@ module Switcher
   def new_state
     open_struct({
       modules: [
+        new_module_handle(TreeTester),
         new_module_handle(RunLevel),
-        new_module_handle(PlayTester),
-        # new_module_handle(BgTester),
-        new_module_handle(SpritesheetTester),
+      # new_module_handle(PlayTester),
+      # new_module_handle(BgTester),
       ],
       selected_index: 0,
       watch_for_reload: false,
@@ -33,22 +34,26 @@ module Switcher
   def update(state, input, res)
     fx = []
 
+    {
+      Gosu::KB_F1 => 0,
+      Gosu::KB_F2 => 1,
+      Gosu::KB_F3 => 2,
+      Gosu::KB_F4 => 3,
+      Gosu::KB_F5 => 4,
+    }.each do |key, i|
+      if input.keyboard.pressed?(key) && i < state.modules.length
+        switch_to_module(state, i)
+        reset_module_state(state, res) if input.keyboard.shift?
+      end
+    end
+
     case
-    when input.keyboard.pressed?(Gosu::KB_F1)
-      switch_to_module(state, 0)
-      reset_module_state(state) if input.keyboard.shift?
-    when input.keyboard.pressed?(Gosu::KB_F2)
-      switch_to_module(state, 1)
-      reset_module_state(state) if input.keyboard.shift?
-    when input.keyboard.pressed?(Gosu::KB_F3)
-      switch_to_module(state, 2)
-      reset_module_state(state) if input.keyboard.shift?
     when input.keyboard.pressed?(Gosu::KB_R) && input.keyboard.alt? && input.keyboard.control?
       state.watch_for_reload = !state.watch_for_reload
       puts "Switcher auto-reload: #{state.watch_for_reload}"
     when input.keyboard.pressed?(Gosu::KB_R) && input.keyboard.shift?
       # Re-initialize the state of the currently running module (without reloading code)
-      reset_module_state(state)
+      reset_module_state(state, res)
     when input.keyboard.pressed?(Gosu::KB_R) && input.keyboard.alt?
       # Check for code reload
       fx << Cedar::Sidefx::Reload.new
@@ -86,9 +91,11 @@ module Switcher
     state.selected_index = i
   end
 
-  def reset_module_state(state)
+  def reset_module_state(state, res)
     mod = current(state)
     mod.state = mod.klass.new_state
+    res.reset_caches
+    mod.klass.load_resources(mod.state, res) if mod.klass.respond_to?(:load_resources)
     puts "Reset module state"
   end
 end

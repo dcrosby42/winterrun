@@ -1,0 +1,80 @@
+[
+    {
+        "type": "grid_sheet_sprite",
+        "name": "big_tree_01",
+        "image": "sprites/snowy_forest/tree01.png",
+        "tile_grid": {
+            "x": 50,
+            "y": 0,
+            "w": 215,
+            "h": 512,
+            "count": 1,
+            "stride": 1
+        }
+    },
+    {
+        "type": "grid_sheet_sprite",
+        "name": "skinny_tree_01",
+        "image": "sprites/snowy_forest/tree01.png",
+        "tile_grid": {
+            "x": 556,
+            "y": 0,
+            "w": 120,
+            "h": 512,
+            "count": 1,
+            "stride": 1
+        }
+    },
+    {
+        "type": "grid_sheet_sprite",
+        "name": "big_tree_02",
+        "image": "sprites/snowy_forest/tree02.png",
+        "tile_grid": {
+            "x": 50,
+            "y": 0,
+            "w": 215,
+            "h": 512,
+            "count": 1,
+            "stride": 1
+        }
+    },
+    {
+        "type": "grid_sheet_sprite",
+        "name": "skinny_tree_02",
+        "image": "sprites/snowy_forest/tree02.png",
+        "tile_grid": {
+            "x": 556,
+            "y": 0,
+            "w": 120,
+            "h": 512,
+            "count": 1,
+            "stride": 1
+        }
+    },
+    {
+        "type": "grid_sheet_sprite",
+        "name": "big_tree_03",
+        "image": "sprites/snowy_forest/tree03.png",
+        "tile_grid": {
+            "x": 50,
+            "y": 0,
+            "w": 215,
+            "h": 512,
+            "count": 1,
+            "stride": 1
+        }
+    },
+    {
+        "type": "grid_sheet_sprite",
+        "name": "skinny_tree_03",
+        "image": "sprites/snowy_forest/tree03.png",
+        "tile_grid": {
+            "x": 556,
+            "y": 0,
+            "w": 120,
+            "h": 512,
+            "count": 1,
+            "stride": 1
+        }
+    }
+]

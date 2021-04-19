@@ -29,10 +29,10 @@ module SpritesheetTester
   def new_state
     frame_rate = 24
     return open_struct({
-             scale: 2,
+             scale: 1,
              reload_timer: Cedar::Timer.new({ limit: 1.5, loop: true }),
              sheets: nil,
-             selected_sheet: 0,
+             selected_sheet: 8,
              selected_frame: 0,
              playing: false,
              frame_rate: frame_rate,
@@ -41,6 +41,7 @@ module SpritesheetTester
   end
 
   def load_resources(state, res)
+    puts "load_resources"
     res.configure list_resources
   end
 
@@ -48,6 +49,7 @@ module SpritesheetTester
     [
       "sprites/girl_sprites.json",
       "sprites/boy_sprites.json",
+      "sprites/tree_sprites.json",
     ]
   end
 
@@ -61,6 +63,7 @@ module SpritesheetTester
       "boy_run",
       "boy_jump",
       "boy_biff",
+      "big_tree_01",
     ].map do |name| res.get_sprite(name) end
 
     # +/- keys adjust zoom:
@@ -123,6 +126,7 @@ module SpritesheetTester
     )
 
     draw_sheet_grid(0, 72, sheet, frame, gs, res)
+
     gs << Cedar::Draw::Image.new(
       # path: sheet.path,
       image: sheet.image,
