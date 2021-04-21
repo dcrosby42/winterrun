@@ -4,6 +4,7 @@ $LOAD_PATH << $PROJECT_ROOT + "/lib"
 require "ostruct"
 require "pry"
 
+require "park_miller"
 require "cedar"
 require "cedar/ecs"
 
