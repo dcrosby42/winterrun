@@ -3,6 +3,7 @@ module RunLevel
   extend Cedar::Helpers
 end
 
+require "park_miller_random"
 require "cedar/ecs"
 require "run_level/placeholder"
 require "run_level/debug_watch"
@@ -10,7 +11,6 @@ require "run_level/camera"
 require "run_level/follower"
 require "run_level/background"
 require "run_level/girl"
-require "run_level/entities"
 
 module RunLevel
   extend self
@@ -30,6 +30,40 @@ module RunLevel
         show: true,
       },
     })
+  end
+
+  def new_tree(estore, sprite, x)
+    estore.new_entity do |e|
+      e.add Sprite.new(id: sprite, scale_x: 1, scale_y: 1, center_x: 0.5, center_y: 1)
+      e.add Pos.new(x: x, y: 480, z: 9)
+    end
+  end
+
+  def initial_entities(estore)
+    new_camera_entity estore
+
+    new_girl_entity estore
+
+    rs = 12345 * 12345
+    rs = ParkMillerRandom.next(rs)
+
+    new_tree estore, "big_tree_01", 100
+    new_tree estore, "skinny_tree_01", 250
+    new_tree estore, "big_tree_02", 400
+    new_tree estore, "skinny_tree_02", 550
+    new_tree estore, "big_tree_03", 700
+  end
+
+  def load_resources(state, res)
+    res.configure list_resources
+  end
+
+  def list_resources
+    [
+      "sprites/girl_sprites.json",
+      "sprites/snowy_background.json",
+      "sprites/tree_sprites.json",
+    ]
   end
 
   $P = !!ENV["P"]

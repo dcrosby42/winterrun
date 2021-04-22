@@ -3,10 +3,10 @@ module RunLevel
 
   BGW = 1421 # hardcoded bg image width.  Could proly get this from resources
   Scheme = {
-    0 => { sprite_id: "bg_l0", paralax: 0.125, w: 1421 },
-    1 => { sprite_id: "bg_l1", paralax: 0.25, w: 1421 },
-    2 => { sprite_id: "bg_l2", paralax: 0.5, w: 1421 },
-    3 => { sprite_id: "bg_l3", paralax: 1, w: 1421 },
+    0 => { sprite_id: "bg_l0", paralax: 0.1, w: 1421 },
+    1 => { sprite_id: "bg_l1", paralax: 0.2, w: 1421 },
+    2 => { sprite_id: "bg_l2", paralax: 0.4, w: 1421 },
+    3 => { sprite_id: "bg_l3", paralax: 0.7, w: 1421 },
   }
 
   # paralax_calc determines where to position one or more "tiles" to create proper paralax offset.
@@ -52,9 +52,9 @@ module RunLevel
           xs = paralax_calc(cam.pos.x, cam.camera.world_w, cfg[:paralax], cfg[:w])
 
           # deleteme: debugging
-          with_placeholder(estore, "Background") do |h|
-            h.data[layer] = xs
-          end
+          # with_placeholder(estore, "Background") do |h|
+          #   h.data[layer] = xs
+          # end
 
           # Arrange bg ents based on the current x coords.
           # Modify or add or remove entities as needed
