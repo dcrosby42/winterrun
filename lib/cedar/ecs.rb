@@ -1,8 +1,0 @@
-require "cedar"
-require "cedar/ecs/helpers"
-require "cedar/ecs/entity"
-require "cedar/ecs/components"
-require "cedar/ecs/entity_store"
-require "cedar/ecs/caching_entity_store"
-require "cedar/ecs/entity_filter"
-require "cedar/ecs/systems"
