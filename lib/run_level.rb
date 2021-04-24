@@ -3,7 +3,7 @@ module RunLevel
   extend Cedar::Helpers
 end
 
-require "park_miller_random"
+require "park_miller"
 require "cedar/ecs"
 require "run_level/placeholder"
 require "run_level/debug_watch"
@@ -39,13 +39,20 @@ module RunLevel
     end
   end
 
+  TreeSeed = 49341 * 22033 * 49404 * 49506
+  TreeSprites = %w|big_tree_01 big_tree_02 big_tree_03 skinny_tree_01 skinny_tree_02 skinny_tree_03|
+
   def initial_entities(estore)
     new_camera_entity estore
 
     new_girl_entity estore
 
-    rs = 12345 * 12345
-    rs = ParkMillerRandom.next(rs)
+    rng = ParkMiller.new(TreeSeed)
+    Enumerator.new do |y|
+      y << rng.int(0, TreeSprites.count - 1)
+    end
+
+    # rs = ParkMillerRandom.next(rs)
 
     new_tree estore, "big_tree_01", 100
     new_tree estore, "skinny_tree_01", 250

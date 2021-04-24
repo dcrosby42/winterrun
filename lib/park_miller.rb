@@ -1,7 +1,7 @@
 # Park-Miller RNG
 class ParkMiller
   A = 48271
-  B = 2147483647
+  B = 0x7FFFFFFF  # == (2**31) - 1
 
   class << self
     # next generator state
@@ -32,16 +32,39 @@ class ParkMiller
       f, s = float(s)
       [f <= prob, s]
     end
+
+    def choose(s, arr)
+      i, s = self.int(s, 0, arr.length - 1)
+      [arr[i], s]
+    end
+
+    def shuffle(s, arr)
+      arr = arr.clone
+      res = []
+      n = arr.count
+      n.times do
+        i, s = int(s, 0, arr.count - 1)
+        res << arr.delete_at(i)
+      end
+      [res, s]
+    end
+
+    def rand_state
+      (Kernel.rand * B).to_i
+    end
   end
 
   attr_accessor :state
 
   def initialize(state = nil)
-    @state = state || (rand * 100000).to_i + 10000
+    @state = state || self.class.rand_state
   end
 
-  def next
-    @state = self.class.call(@state)
+  def next(churn = 1)
+    churn.times do
+      @state = self.class.call(@state)
+    end
+    @state
   end
 
   def float(lo = 0.0, hi = 1.0)
@@ -59,5 +82,15 @@ class ParkMiller
   def chance(prob = 0.5)
     b, @state = self.class.chance(@state, prob)
     b
+  end
+
+  def choose(arr)
+    x, @state = self.class.choose(@state, arr)
+    x
+  end
+
+  def shuffle(arr)
+    res, @state = self.class.shuffle(@state, arr)
+    res
   end
 end

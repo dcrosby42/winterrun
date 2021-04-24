@@ -10,8 +10,7 @@ end
 
 desc "Scratch console prompt"
 task :console do
-  require "./config/environment"
-  binding.pry
+  exec "bundle exec ruby console.rb"
 end
 
 RSpec::Core::RakeTask.new(:spec)
