@@ -1,30 +1,23 @@
-require "modules/play_tester"
 require "run_level"
-# require "modules/bg_tester"
 require "modules/spritesheet_tester"
 require "modules/tree_tester"
 
 module Switcher
   extend self
 
+  Modules = [RunLevel, TreeTester, SpritesheetTester]
+
   def new_state
     open_struct({
-      modules: [
-        new_module_handle(TreeTester),
-        new_module_handle(RunLevel),
-      # new_module_handle(PlayTester),
-      # new_module_handle(BgTester),
-      ],
+      modules: Modules.map do |m| new_module_handle m end,
       selected_index: 0,
       watch_for_reload: false,
       reload_timer: Cedar::Timer.new({ limit: 1.5, loop: true }),
     })
   end
 
-  def load_resources(state, res)
-    state.modules.each do |mod|
-      mod.klass.load_resources(mod.state, res) if mod.klass.respond_to?(:load_resources)
-    end
+  def resource_config
+    Modules.map(&:resource_config).flatten
   end
 
   def new_module_handle(mklass)
@@ -43,30 +36,48 @@ module Switcher
     }.each do |key, i|
       if input.keyboard.pressed?(key) && i < state.modules.length
         switch_to_module(state, i)
-        reset_module_state(state, res) if input.keyboard.shift?
+        reset_current_module_state(state, res) if input.keyboard.shift?
       end
     end
 
+    # Manually-invoked code and state reload:
     case
-    when input.keyboard.pressed?(Gosu::KB_R) && input.keyboard.alt? && input.keyboard.control?
-      state.watch_for_reload = !state.watch_for_reload
-      puts "Switcher auto-reload: #{state.watch_for_reload}"
-    when input.keyboard.pressed?(Gosu::KB_R) && input.keyboard.shift?
-      # Re-initialize the state of the currently running module (without reloading code)
-      reset_module_state(state, res)
-    when input.keyboard.pressed?(Gosu::KB_R) && input.keyboard.alt?
-      # Check for code reload
-      fx << Cedar::Sidefx::Reload.new
+    when input.keyboard.pressed?(Gosu::KB_R)
+      if input.keyboard.alt?
+        state.watch_for_reload = !state.watch_for_reload
+        puts "Code reload timer: #{state.watch_for_reload ? "on" : "off"}"
+      else
+        if input.keyboard.control?
+          puts "Request code-reload check"
+          fx << Cedar::Sidefx::ReloadCode.new
+        elsif input.keyboard.shift?
+          puts "Reset module state"
+          reset_current_module_state(state, res)
+        end
+      end
+    end
+
+    # case
+    # when input.keyboard.pressed?(Gosu::KB_R) && input.keyboard.alt? && input.keyboard.control?
+    #   state.watch_for_reload = !state.watch_for_reload
+    #   puts "Switcher auto-reload: #{state.watch_for_reload}"
+    # when input.keyboard.pressed?(Gosu::KB_R) && input.keyboard.shift?
+    #   # Re-initialize the state of the currently running module (without reloading code)
+    #   reset_module_state(state, res)
+    # when input.keyboard.pressed?(Gosu::KB_R) && input.keyboard.alt?
+    #   # Check for code reload
+    #   fx << Cedar::Sidefx::ReloadCode.new
+    # end
+
+    # When timer-driven code reload is on:
+    if state.watch_for_reload
+      # reload timer
+      Cedar.update_timer state.reload_timer, input.time.dt
+      fx << Cedar::Sidefx::ReloadCode.new if state.reload_timer.alarm
     end
 
     # fullscreen toggle?
     fx << Cedar::Sidefx::ToggleFullscreen.new if input.keyboard.pressed?(Gosu::KB_F11)
-
-    if state.watch_for_reload
-      # reload timer
-      Cedar.update_timer state.reload_timer, input.time.dt
-      fx << Cedar::Sidefx::Reload.new if state.reload_timer.alarm
-    end
 
     # update module state
     mod = current(state)
@@ -91,7 +102,7 @@ module Switcher
     state.selected_index = i
   end
 
-  def reset_module_state(state, res)
+  def reset_current_module_state(state, res)
     mod = current(state)
     mod.state = mod.klass.new_state
     res.reset_caches

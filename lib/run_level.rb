@@ -15,6 +15,8 @@ require "run_level/girl"
 module RunLevel
   extend self
 
+  RootSeed = 49341 * 22033 * 49404 * 49506
+
   def new_state
     estore = CachingEntityStore.new
     initial_entities estore
@@ -39,7 +41,6 @@ module RunLevel
     end
   end
 
-  TreeSeed = 49341 * 22033 * 49404 * 49506
   TreeSprites = %w|big_tree_01 big_tree_02 big_tree_03 skinny_tree_01 skinny_tree_02 skinny_tree_03|
 
   def initial_entities(estore)
@@ -47,25 +48,28 @@ module RunLevel
 
     new_girl_entity estore
 
-    rng = ParkMiller.new(TreeSeed)
-    Enumerator.new do |y|
-      y << rng.int(0, TreeSprites.count - 1)
+    #tree_sprites = Enumerator.new do |y| y << TreeSpriteRng.choose(TreeSprites) end
+
+    # new_tree estore, "big_tree_01", 100
+    # new_tree estore, "skinny_tree_01", 250
+    # new_tree estore, "big_tree_02", 400
+    # new_tree estore, "skinny_tree_02", 550
+    # new_tree estore, "big_tree_03", 700
+    begin
+      root_rng = ParkMiller.new(RootSeed)
+      tree_sprite_rng = root_rng.gen_rng
+      tree_pos_rng = root_rng.gen_rng
+
+      pos = 0
+      10.times do
+        sprite = tree_sprite_rng.choose(TreeSprites)
+        pos += tree_pos_rng.int(100, 250)
+        new_tree estore, sprite, pos
+      end
     end
-
-    # rs = ParkMillerRandom.next(rs)
-
-    new_tree estore, "big_tree_01", 100
-    new_tree estore, "skinny_tree_01", 250
-    new_tree estore, "big_tree_02", 400
-    new_tree estore, "skinny_tree_02", 550
-    new_tree estore, "big_tree_03", 700
   end
 
-  def load_resources(state, res)
-    res.configure list_resources
-  end
-
-  def list_resources
+  def resource_config
     [
       "sprites/girl_sprites.json",
       "sprites/snowy_background.json",

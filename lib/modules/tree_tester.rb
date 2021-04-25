@@ -15,15 +15,8 @@ module TreeTester
     return open_struct({})
   end
 
-  def load_resources(state, res)
-    puts "load_resources"
-    res.configure list_resources
-  end
-
-  def list_resources
-    [
-      "sprites/tree_sprites.json",
-    ]
+  def resource_config
+    "sprites/tree_sprites.json"
   end
 
   def update(state, input, res)

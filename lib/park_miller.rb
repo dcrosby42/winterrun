@@ -33,11 +33,13 @@ class ParkMiller
       [f <= prob, s]
     end
 
+    # Return a randomly selected item from an array
     def choose(s, arr)
       i, s = self.int(s, 0, arr.length - 1)
       [arr[i], s]
     end
 
+    # Return a randomly-ordered copy of the given array
     def shuffle(s, arr)
       arr = arr.clone
       res = []
@@ -49,9 +51,30 @@ class ParkMiller
       [res, s]
     end
 
+    # Uses Ruby's builtin random (non deterministicly) to return a generator state
     def rand_state
       (Kernel.rand * B).to_i
     end
+
+    def gen_seed(s)
+      s = call(s)
+      seed = s
+      seed += 1111
+      seed *= 2222
+      seed -= 3333
+      seed %= B
+      [seed, s]
+    end
+
+    # def gen_seeds(state, count = 1)
+    #   s = state
+    #   seeds = []
+    #   count.times do
+    #     s = call(s)
+    #     seeds << s.hash % B
+    #   end
+    #   [seeds, s]
+    # end
   end
 
   attr_accessor :state
@@ -92,5 +115,14 @@ class ParkMiller
   def shuffle(arr)
     res, @state = self.class.shuffle(@state, arr)
     res
+  end
+
+  def gen_seed
+    seed, @state = self.class.gen_seed(@state)
+    seed
+  end
+
+  def gen_rng
+    self.class.new(gen_seed)
   end
 end

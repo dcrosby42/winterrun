@@ -40,12 +40,7 @@ module SpritesheetTester
            })
   end
 
-  def load_resources(state, res)
-    puts "load_resources"
-    res.configure list_resources
-  end
-
-  def list_resources
+  def resource_config
     [
       "sprites/girl_sprites.json",
       "sprites/boy_sprites.json",
