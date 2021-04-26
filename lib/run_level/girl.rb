@@ -13,7 +13,7 @@ module RunLevel
   })
 
   GirlRunSpeed = 100
-  JumpSpeed = 90
+  JumpSpeed = 100
   Gravity = 4.5
 
   def self.new_girl_entity(estore)
@@ -61,7 +61,7 @@ module RunLevel
       end
       anim_id = e.vel.dx == 0 ? "girl_stand" : "girl_run"
       if input.keyboard.pressed?(Gosu::KB_SPACE)
-        e.vel.dy -= JumpSpeed
+        e.vel.dy -= JumpSpeed * speed_factor
         anim_id = "girl_jump"
       end
     else

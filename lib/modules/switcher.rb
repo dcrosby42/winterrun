@@ -41,33 +41,10 @@ module Switcher
     end
 
     # Manually-invoked code and state reload:
-    case
-    when input.keyboard.pressed?(Gosu::KB_R)
-      if input.keyboard.alt?
-        state.watch_for_reload = !state.watch_for_reload
-        puts "Code reload timer: #{state.watch_for_reload ? "on" : "off"}"
-      else
-        if input.keyboard.control?
-          puts "Request code-reload check"
-          fx << Cedar::Sidefx::ReloadCode.new
-        elsif input.keyboard.shift?
-          puts "Reset module state"
-          reset_current_module_state(state, res)
-        end
-      end
+    if input.keyboard.pressed?(Gosu::KB_R) && input.keyboard.alt?
+      state.watch_for_reload = !state.watch_for_reload
+      puts "Code reload timer: #{state.watch_for_reload ? "on" : "off"}"
     end
-
-    # case
-    # when input.keyboard.pressed?(Gosu::KB_R) && input.keyboard.alt? && input.keyboard.control?
-    #   state.watch_for_reload = !state.watch_for_reload
-    #   puts "Switcher auto-reload: #{state.watch_for_reload}"
-    # when input.keyboard.pressed?(Gosu::KB_R) && input.keyboard.shift?
-    #   # Re-initialize the state of the currently running module (without reloading code)
-    #   reset_module_state(state, res)
-    # when input.keyboard.pressed?(Gosu::KB_R) && input.keyboard.alt?
-    #   # Check for code reload
-    #   fx << Cedar::Sidefx::ReloadCode.new
-    # end
 
     # When timer-driven code reload is on:
     if state.watch_for_reload
